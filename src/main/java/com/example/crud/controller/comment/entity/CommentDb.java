@@ -1,10 +1,16 @@
 package com.example.crud.controller.comment.entity;
 
 import com.example.crud.controller.board.entity.BoardDb;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -14,13 +20,27 @@ public class CommentDb {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "boardId")
+    @JoinColumn(name = "boardId", nullable = false)
+    @JsonBackReference
     private BoardDb board;
 
-    private String comment;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "bigCommentId")
+    @JsonBackReference
+    private CommentDb bigComment;
 
+    @OneToMany(mappedBy = "bigComment", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<CommentDb> smallComment;
+
+    @NotBlank
+    @Size(min = 2, max = 10)
     private String nickname;
+
+    @NotBlank
+    @Size(min = 4, max = 20)
+    private String password;
 }
