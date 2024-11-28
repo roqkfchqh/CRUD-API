@@ -11,7 +11,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +23,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Builder
+@EntityListeners(AuditingEntityListener.class)
 public class BoardDb {
 
     @Id
@@ -45,14 +49,19 @@ public class BoardDb {
     private Category category = Category.FREE;
 
     @Setter
+    @Builder.Default
     @Column(nullable = false, columnDefinition = "int default 0")
     private int like = 0;
 
     @Setter
+    @Builder.Default
     @Column(nullable = false, columnDefinition = "int default 0")
     private int count = 0;
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<CommentDb> comments = new ArrayList<>();
+
+    @CreatedDate
+    private LocalDateTime createdDate;
 }
