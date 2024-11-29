@@ -22,6 +22,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Setter
 @Builder
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "board_db")
@@ -47,12 +48,10 @@ public class BoardDb {
     @Column(nullable = false)
     private Category category = Category.FREE;
 
-    @Setter
     @Builder.Default
     @Column(nullable = false)
     private int liked = 0;
 
-    @Setter
     @Builder.Default
     @Column(nullable = false)
     private int count = 0;
