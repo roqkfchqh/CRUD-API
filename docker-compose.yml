@@ -3,11 +3,11 @@ services:
     image: postgres:latest
     container_name: crud_db
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: crud_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=crud_db
     ports:
-      - "11111:11111"
+      - "11111:5432"
     networks:
       - mine
 
@@ -15,14 +15,14 @@ services:
     build: .
     container_name: lcy
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:11111/crud_db
+      SPRING_DATASOURCE_URL: jdbc:postgresql://crud_db:5432/crud_db
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
       REDIS_HOST: redis
-      REDIS_PORT: 33333
+      REDIS_PORT: 26379
       REDIS_PASSWORD: ${DB_PASSWORD}
     ports:
-      - "22222:22222"
+      - "33333:33333"
     depends_on:
       - database
     networks:
@@ -32,7 +32,7 @@ services:
     image: redis:latest
     container_name: redis-cache
     ports:
-      - "33333:33333"
+      - "26379:26379"
     command: redis-server --requirepass your_password
     networks:
       - mine
