@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -18,6 +19,7 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
 @Builder
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "comment_db")
@@ -28,12 +30,12 @@ public class CommentDb {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "boardId", nullable = false)
+    @JoinColumn(name = "board_id", nullable = false)
     @JsonBackReference
     private BoardDb board;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "bigCommentId")
+    @JoinColumn(name = "big_comment_id")
     @JsonBackReference
     private CommentDb bigComment;
 
@@ -42,11 +44,12 @@ public class CommentDb {
     private List<CommentDb> smallComment;
 
     @NotBlank
-    @Size(min = 2, max = 10)
+    private String content;
+
+    @NotBlank
     private String nickname;
 
     @NotBlank
-    @Size(min = 4, max = 20)
     private String password;
 
     @CreatedDate

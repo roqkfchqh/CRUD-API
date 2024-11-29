@@ -31,32 +31,30 @@ public class BoardDb {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
+    @Column(nullable = false, length = 100)
     private String title;
 
-    @NotBlank
+    @Column(nullable = false)
     private String content;
 
-    @NotBlank
-    @Size(min = 2, max = 10)
+    @Column(nullable = false, length = 10)
     private String nickname;
 
-    @NotBlank
-    @Size(min = 4, max = 20)
+    @Column(nullable = false, length = 20)
     private String password;
 
     @Enumerated(EnumType.STRING)
-    @NotNull
+    @Column(nullable = false)
     private Category category = Category.FREE;
 
     @Setter
     @Builder.Default
-    @Column(nullable = false, columnDefinition = "integer default 0")
-    private int like = 0;
+    @Column(nullable = false)
+    private int liked = 0;
 
     @Setter
     @Builder.Default
-    @Column(nullable = false, columnDefinition = "integer default 0")
+    @Column(nullable = false)
     private int count = 0;
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
