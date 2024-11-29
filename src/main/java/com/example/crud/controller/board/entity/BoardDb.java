@@ -24,6 +24,7 @@ import java.util.List;
 @Getter
 @Builder
 @EntityListeners(AuditingEntityListener.class)
+@Table(name = "board_db")
 public class BoardDb {
 
     @Id
@@ -50,12 +51,12 @@ public class BoardDb {
 
     @Setter
     @Builder.Default
-    @Column(nullable = false, columnDefinition = "int default 0")
+    @Column(nullable = false, columnDefinition = "integer default 0")
     private int like = 0;
 
     @Setter
     @Builder.Default
-    @Column(nullable = false, columnDefinition = "int default 0")
+    @Column(nullable = false, columnDefinition = "integer default 0")
     private int count = 0;
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -20,6 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @EntityListeners(AuditingEntityListener.class)
+@Table(name = "comment_db")
 public class CommentDb {
 
     @Id
