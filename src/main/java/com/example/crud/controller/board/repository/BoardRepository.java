@@ -1,9 +1,19 @@
 package com.example.crud.controller.board.repository;
 
 import com.example.crud.controller.board.entity.BoardDb;
+import com.example.crud.controller.board.entity.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
-@Repository
+import java.util.List;
+
 public interface BoardRepository extends JpaRepository<BoardDb, Long>, BoardRepositoryCustom {
+
+    @Query("SELECT b FROM BoardDb b WHERE b.title LIKE %:keyword%")
+    List<BoardDb> findByTitleContaining(@Param("keyword")String keyword);
+
+    @Query("SELECT b FROM BoardDb b WHERE b.category = :category")
+    List<BoardDb> findByCategory(@Param("category") String category);
+
 }

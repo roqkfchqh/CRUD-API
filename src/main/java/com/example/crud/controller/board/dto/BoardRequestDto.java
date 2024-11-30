@@ -2,11 +2,11 @@ package com.example.crud.controller.board.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
+@Builder
 @Getter
-@Setter
 public class BoardRequestDto {
     @NotBlank(message = "제목을 입력해주세요.")
     @Size(min = 1, max = 100, message = "제목은 1자 이상 100자 이하로 작성 가능합니다.")
