@@ -101,6 +101,7 @@ public class BoardService {
         if (start >= boardDb.size()) {
             return List.of();
         }
+
         return boardDb.subList(start, end).stream()
                 .map(BoardMapper::toResponseDto)
                 .collect(Collectors.toList());

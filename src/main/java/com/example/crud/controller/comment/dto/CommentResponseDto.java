@@ -1,11 +1,14 @@
 package com.example.crud.controller.comment.dto;
 
 import com.example.crud.controller.comment.entity.CommentDb;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
+@Builder
+@AllArgsConstructor
 public class CommentResponseDto {
     private Long id;
     private String content;

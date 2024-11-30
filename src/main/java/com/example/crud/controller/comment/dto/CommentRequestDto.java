@@ -1,14 +1,17 @@
 package com.example.crud.controller.comment.dto;
 
+import com.example.crud.controller.board.entity.BoardDb;
 import com.example.crud.controller.comment.entity.CommentDb;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@Builder
 public class CommentRequestDto {
 
     @NotBlank(message = "내용을 입력해주세요.")
@@ -24,5 +27,5 @@ public class CommentRequestDto {
     private String password;
 
     @NotNull(message = "잘못된 접근입니다.")
-    private Long boardId;
+    private BoardDb boardDb;
 }
