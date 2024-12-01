@@ -1,36 +1,38 @@
 package com.example.crud.controller.comment.service;
 
+import com.example.crud.controller.board.entity.BoardDb;
 import com.example.crud.controller.comment.dto.CommentMapper;
 import com.example.crud.controller.comment.dto.CommentRequestDto;
 import com.example.crud.controller.comment.dto.CommentResponseDto;
 import com.example.crud.controller.comment.entity.CommentDb;
 import com.example.crud.controller.comment.repository.CommentRepository;
 import com.example.crud.controller.common.exception.BadInputException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Service
+@RequiredArgsConstructor
 public class CommentService {
 
     private final CommentRepository commentRepository;
 
-    public CommentService(CommentRepository commentRepository) {
-        this.commentRepository = commentRepository;
-    }
-
-    //create
-    public CommentResponseDto create(CommentRequestDto commentRequestDto) {
+    //createComment
+    public CommentResponseDto createComment(CommentRequestDto commentRequestDto) {
         CommentDb commentDb = CommentMapper.fromCommentRequestDto(commentRequestDto);
         commentRepository.save(commentDb);
         return CommentMapper.toCommentResponseDto(commentDb);
     }
 
-    //read
-    public List<CommentResponseDto> findAll() {
-        List<CommentDb> commentDbs = commentRepository.findAll();
-        return commentDbs.stream().map(CommentMapper::toCommentResponseDto).collect(Collectors.toList());
+    //getComment
+    public Page<CommentResponseDto> getCommentsBoard(BoardDb boardDb, int page, int size){
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createDate").descending());
+        Page<CommentDb> commentsPage = commentRepository.findByBoard(boardDb, pageable);
+
+        return commentsPage.map(CommentMapper::toCommentResponseDto);
     }
 
     //update
@@ -38,8 +40,7 @@ public class CommentService {
         CommentDb commentDb = commentRepository.findById(id)
                 .orElseThrow(() -> new BadInputException("없는디"));
 
-        commentDb.setContent(commentRequestDto.getContent().getContent());
-        commentDb.setNickname(commentRequestDto.getNickname());
+        commentDb.updateContent(commentRequestDto.getContent());
 
         commentRepository.save(commentDb);
         return CommentMapper.toCommentResponseDto(commentDb);

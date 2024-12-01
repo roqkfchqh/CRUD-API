@@ -14,7 +14,6 @@ import java.util.List;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Setter
 @Getter
 @Builder
 @EntityListeners(AuditingEntityListener.class)
@@ -55,4 +54,18 @@ public class BoardDb {
 
     @CreatedDate
     private LocalDateTime createdDate;
+
+    public void updatePost(String content, String title, String category) {
+        this.content = content;
+        this.title = title;
+        this.category = Category.valueOf(category);
+    }
+
+    public void updateLiked(int liked) {
+        this.liked = liked;
+    }
+
+    public void updateCount(int count) {
+        this.count = count;
+    }
 }

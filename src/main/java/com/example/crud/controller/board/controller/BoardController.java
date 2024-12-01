@@ -3,20 +3,18 @@ package com.example.crud.controller.board.controller;
 import com.example.crud.controller.board.dto.BoardRequestDto;
 import com.example.crud.controller.board.dto.BoardResponseDto;
 import com.example.crud.controller.board.service.BoardService;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/boards")
+@RequiredArgsConstructor
 public class BoardController {
 
-    private BoardService boardService;
-
-    public BoardController(BoardService boardService) {
-        this.boardService = boardService;
-    }
+    private final BoardService boardService;
 
     @PostMapping
     public ResponseEntity<BoardResponseDto> createPost(@RequestBody BoardRequestDto boardRequestDto){
@@ -45,17 +43,17 @@ public class BoardController {
     }
 
     @GetMapping("/page")
-    public ResponseEntity<List<BoardResponseDto>> getPagedBoard(@RequestParam int page, @RequestParam int size){
+    public ResponseEntity<Page<BoardResponseDto>> getPagedBoard(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size){
         return ResponseEntity.ok(boardService.pagingBoard(page, size));
     }
 
     @GetMapping("/page/category/{keyword}")
-    public ResponseEntity<List<BoardResponseDto>> getCategoryBoard(@PathVariable String keyword, @RequestParam int page, @RequestParam int size){
+    public ResponseEntity<Page<BoardResponseDto>> getCategoryBoard(@PathVariable String keyword, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size){
         return ResponseEntity.ok(boardService.pagingCategory(keyword, page, size));
     }
 
     @GetMapping("/page/search/{keyword}")
-    public ResponseEntity<List<BoardResponseDto>> getSearchBoard(@PathVariable String keyword, @RequestParam int page, @RequestParam int size){
+    public ResponseEntity<Page<BoardResponseDto>> getSearchBoard(@PathVariable String keyword, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size){
         return ResponseEntity.ok(boardService.pagingSearch(keyword, page, size));
     }
 }

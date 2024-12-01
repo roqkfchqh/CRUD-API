@@ -28,7 +28,7 @@ public class CommentMapper {
     public static CommentDb fromCommentRequestDto(CommentRequestDto commentRequestDto){
         return CommentDb.builder()
                 .nickname(commentRequestDto.getNickname())
-                .content(commentRequestDto.getContent().getContent())
+                .content(commentRequestDto.getContent())
                 .password(commentRequestDto.getPassword())
                 .board(commentRequestDto.getBoardDb())
                 .build();

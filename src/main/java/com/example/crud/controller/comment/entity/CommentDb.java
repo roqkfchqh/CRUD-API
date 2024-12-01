@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -16,7 +15,6 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Setter
 @Getter
 @Builder
 @EntityListeners(AuditingEntityListener.class)
@@ -52,4 +50,8 @@ public class CommentDb {
 
     @CreatedDate
     private LocalDateTime createDate;
+
+    public void updateContent(String content) {
+        this.content = content;
+    }
 }
