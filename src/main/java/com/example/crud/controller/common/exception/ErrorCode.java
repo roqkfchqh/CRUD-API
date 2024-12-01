@@ -1,4 +1,4 @@
-package com.example.crud.controller.common.exception.errorcode;
+package com.example.crud.controller.common.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

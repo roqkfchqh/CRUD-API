@@ -1,19 +1,23 @@
 package com.example.crud.controller.common.exception;
 
-import com.example.crud.controller.common.exception.errorcode.ErrorCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(CustomException.class)
-    public ResponseEntity<ErrorResponse> handleBadInputException(CustomException e){
+    public ResponseEntity<Map<String, Object>> handleCustomException(CustomException e){
         ErrorCode errorCode = e.getErrorCode();
-        return new ResponseEntity<>(
-                new ErrorResponse(errorCode.getStatus(), errorCode.getMessage()),
-                 errorCode.getStatus()
-        );
+        return ResponseEntity.status(errorCode.getStatus())
+                .body(Map.of(
+                        "⛔: ", errorCode.getMessage(),
+                        "에러코드: ", errorCode.getStatus()
+
+
+                ));
     }
 }
