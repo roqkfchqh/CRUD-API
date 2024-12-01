@@ -5,7 +5,7 @@ import com.example.crud.controller.board.repository.BoardRepository;
 import com.example.crud.controller.comment.dto.CommentRequestDto;
 import com.example.crud.controller.comment.dto.CommentResponseDto;
 import com.example.crud.controller.comment.service.CommentService;
-import com.example.crud.controller.common.exception.BadInputException;
+import com.example.crud.controller.common.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +27,7 @@ public class CommentController {
     @GetMapping("/{boardId}")
     public ResponseEntity<Page<CommentResponseDto>> getCommentsBoard(@PathVariable Long boardId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         BoardDb boardDb = boardRepository.findById(boardId)
-                .orElseThrow(() -> new BadInputException("없는글인디"));
+                .orElseThrow(() -> new CustomException("없는글인디"));
 
         Page<CommentResponseDto> commentsPage = commentService.getCommentsBoard(boardDb, page, size);
         return ResponseEntity.ok(commentsPage);

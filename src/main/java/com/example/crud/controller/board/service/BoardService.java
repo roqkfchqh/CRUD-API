@@ -5,7 +5,7 @@ import com.example.crud.controller.board.dto.BoardRequestDto;
 import com.example.crud.controller.board.dto.BoardResponseDto;
 import com.example.crud.controller.board.entity.BoardDb;
 import com.example.crud.controller.board.repository.BoardRepository;
-import com.example.crud.controller.common.exception.BadInputException;
+import com.example.crud.controller.common.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -33,7 +33,7 @@ public class BoardService {
     //read
     public BoardResponseDto readPost(Long id) {
         BoardDb boardDb = boardRepository.findById(id)
-                .orElseThrow(() -> new BadInputException("게시글 없음"));
+                .orElseThrow(() -> new CustomException("게시글 없음"));
         boardDb.updateCount(boardDb.getCount() + 1);
         boardRepository.save(boardDb);
         return BoardMapper.toResponseDto(boardDb);
@@ -42,9 +42,9 @@ public class BoardService {
     //update
     public BoardResponseDto updatePost(Long id, BoardRequestDto boardRequestDto) {
         BoardDb boardDb = boardRepository.findById(id)
-                .orElseThrow(() -> new BadInputException("게시글 없음"));
+                .orElseThrow(() -> new CustomException("게시글 없음"));
         if (!passwordEncoder.matches(boardRequestDto.getPassword(), boardDb.getPassword())) {
-            throw new BadInputException("비밀번호가 일치하지 않습니다.");
+            throw new CustomException("비밀번호가 일치하지 않습니다.");
         }
 
         boardDb.updatePost(boardRequestDto.getContent(), boardRequestDto.getTitle(), boardRequestDto.getCategory());
@@ -56,7 +56,7 @@ public class BoardService {
     //like
     public BoardResponseDto likePost(Long id) {
         BoardDb boardDb = boardRepository.findById(id)
-                .orElseThrow(() -> new BadInputException("게시글 없음"));
+                .orElseThrow(() -> new CustomException("게시글 없음"));
 
         boardDb.updateLiked(boardDb.getLiked() + 1);
         boardRepository.save(boardDb);
@@ -66,9 +66,9 @@ public class BoardService {
     //delete
     public void deletePost(Long id, String password) {
         BoardDb boardDb = boardRepository.findById(id)
-                .orElseThrow(() -> new BadInputException("게시글 없음"));
+                .orElseThrow(() -> new CustomException("게시글 없음"));
         if (!passwordEncoder.matches(password, boardDb.getPassword())) {
-            throw new BadInputException("비밀번호가 일치하지 않습니다.");
+            throw new CustomException("비밀번호가 일치하지 않습니다.");
         }
         boardRepository.deleteById(id);
     }
@@ -99,7 +99,7 @@ public class BoardService {
 
     private static void extracted(int page, int size) {
         if (page < 1 || size < 1) {
-            throw new BadInputException("오류");
+            throw new CustomException("오류");
         }
     }
 

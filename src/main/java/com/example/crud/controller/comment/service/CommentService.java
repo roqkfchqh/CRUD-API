@@ -6,7 +6,7 @@ import com.example.crud.controller.comment.dto.CommentRequestDto;
 import com.example.crud.controller.comment.dto.CommentResponseDto;
 import com.example.crud.controller.comment.entity.CommentDb;
 import com.example.crud.controller.comment.repository.CommentRepository;
-import com.example.crud.controller.common.exception.BadInputException;
+import com.example.crud.controller.common.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -42,10 +42,10 @@ public class CommentService {
     //update
     public CommentResponseDto updateComment(Long id, CommentRequestDto commentRequestDto) {
         CommentDb commentDb = commentRepository.findById(id)
-                .orElseThrow(() -> new BadInputException("없는디"));
+                .orElseThrow(() -> new CustomException("없는디"));
 
         if (!passwordEncoder.matches(commentRequestDto.getPassword(), commentDb.getPassword())) {
-            throw new BadInputException("비밀번호가 일치하지 않습니다.");
+            throw new CustomException("비밀번호가 일치하지 않습니다.");
         }
 
         commentDb.updateContent(commentRequestDto.getContent());
@@ -57,10 +57,10 @@ public class CommentService {
     //delete
     public void deleteComment(Long id, String password) {
         CommentDb commentDb = commentRepository.findById(id)
-                .orElseThrow(() -> new BadInputException("없는디"));
+                .orElseThrow(() -> new CustomException("없는디"));
 
         if (!passwordEncoder.matches(password, commentDb.getPassword())) {
-            throw new BadInputException("비밀번호가 일치하지 않습니다.");
+            throw new CustomException("비밀번호가 일치하지 않습니다.");
         }
         commentRepository.deleteById(id);
     }
