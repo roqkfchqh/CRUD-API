@@ -11,20 +11,21 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class BoardService {
 
     private final BoardRepository boardRepository;
+    private final PasswordEncoder passwordEncoder;
 
     //createComment
     public BoardResponseDto createPost(BoardRequestDto boardRequestDto) {
+        String encodedPassword = passwordEncoder.encode(boardRequestDto.getPassword());
         BoardDb boardDb = BoardMapper.fromRequestDto(boardRequestDto);
+        boardDb.setPassword(encodedPassword);
         boardRepository.save(boardDb);
         return BoardMapper.toResponseDto(boardDb);
     }
@@ -42,6 +43,9 @@ public class BoardService {
     public BoardResponseDto updatePost(Long id, BoardRequestDto boardRequestDto) {
         BoardDb boardDb = boardRepository.findById(id)
                 .orElseThrow(() -> new BadInputException("게시글 없음"));
+        if (!passwordEncoder.matches(boardRequestDto.getPassword(), boardDb.getPassword())) {
+            throw new BadInputException("비밀번호가 일치하지 않습니다.");
+        }
 
         boardDb.updatePost(boardRequestDto.getContent(), boardRequestDto.getTitle(), boardRequestDto.getCategory());
 
@@ -60,7 +64,12 @@ public class BoardService {
     }
 
     //delete
-    public void deletePost(Long id) {
+    public void deletePost(Long id, String password) {
+        BoardDb boardDb = boardRepository.findById(id)
+                .orElseThrow(() -> new BadInputException("게시글 없음"));
+        if (!passwordEncoder.matches(password, boardDb.getPassword())) {
+            throw new BadInputException("비밀번호가 일치하지 않습니다.");
+        }
         boardRepository.deleteById(id);
     }
 
@@ -94,15 +103,4 @@ public class BoardService {
         }
     }
 
-    private static List<BoardResponseDto> getBoardResponseDto(int page, int size, List<BoardDb> boardDb) {
-        int start = (page - 1) * size;
-        int end = Math.min(start + size, boardDb.size());
-        if (start >= boardDb.size()) {
-            return List.of();
-        }
-
-        return boardDb.subList(start, end).stream()
-                .map(BoardMapper::toResponseDto)
-                .collect(Collectors.toList());
-    }
 }

@@ -16,6 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@Setter
 @Builder
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "comment_db")

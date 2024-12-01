@@ -11,10 +11,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
-
 @Configuration
 public class SecurityConfig {
 
+    //유저권한 접근페이지 설정
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         http.csrf((csrf) -> csrf.disable());
@@ -26,10 +26,8 @@ public class SecurityConfig {
         http.authorizeHttpRequests((authorizeHttpRequests) ->
                 authorizeHttpRequests
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
-
                         .anyRequest().permitAll()
         );
-
         return http.build();
     }
 
@@ -40,10 +38,10 @@ public class SecurityConfig {
                 .password(passwordEncoder().encode("jane"))
                 .roles("USER")
                 .build();
-
         return new InMemoryUserDetailsManager(user);
     }
 
+    //비번 bcrypt 암호화 적용
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();

@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -19,10 +20,13 @@ import org.springframework.stereotype.Service;
 public class CommentService {
 
     private final CommentRepository commentRepository;
+    private final PasswordEncoder passwordEncoder;
 
     //createComment
     public CommentResponseDto createComment(CommentRequestDto commentRequestDto) {
+        String encodedPassword = passwordEncoder.encode(commentRequestDto.getPassword());
         CommentDb commentDb = CommentMapper.fromCommentRequestDto(commentRequestDto);
+        commentDb.setPassword(encodedPassword);
         commentRepository.save(commentDb);
         return CommentMapper.toCommentResponseDto(commentDb);
     }
@@ -40,6 +44,10 @@ public class CommentService {
         CommentDb commentDb = commentRepository.findById(id)
                 .orElseThrow(() -> new BadInputException("없는디"));
 
+        if (!passwordEncoder.matches(commentRequestDto.getPassword(), commentDb.getPassword())) {
+            throw new BadInputException("비밀번호가 일치하지 않습니다.");
+        }
+
         commentDb.updateContent(commentRequestDto.getContent());
 
         commentRepository.save(commentDb);
@@ -47,7 +55,13 @@ public class CommentService {
     }
 
     //delete
-    public void deleteComment(Long id) {
+    public void deleteComment(Long id, String password) {
+        CommentDb commentDb = commentRepository.findById(id)
+                .orElseThrow(() -> new BadInputException("없는디"));
+
+        if (!passwordEncoder.matches(password, commentDb.getPassword())) {
+            throw new BadInputException("비밀번호가 일치하지 않습니다.");
+        }
         commentRepository.deleteById(id);
     }
 }
