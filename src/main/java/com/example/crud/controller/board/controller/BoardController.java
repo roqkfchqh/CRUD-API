@@ -1,7 +1,8 @@
 package com.example.crud.controller.board.controller;
 
-import com.example.crud.controller.board.dto.BoardRequestDto;
+import com.example.crud.controller.board.dto.BoardCombinedRequestDto;
 import com.example.crud.controller.board.dto.BoardResponseDto;
+import com.example.crud.controller.board.dto.BoardPasswordRequestDto;
 import com.example.crud.controller.board.service.BoardService;
 
 import lombok.RequiredArgsConstructor;
@@ -17,8 +18,8 @@ public class BoardController {
     private final BoardService boardService;
 
     @PostMapping
-    public ResponseEntity<BoardResponseDto> createPost(@RequestBody BoardRequestDto boardRequestDto){
-        return ResponseEntity.ok(boardService.createPost(boardRequestDto));
+    public ResponseEntity<BoardResponseDto> createPost(@RequestBody BoardCombinedRequestDto boardCombinedRequestDto){
+        return ResponseEntity.ok(boardService.createPost(boardCombinedRequestDto));
     }
 
     @GetMapping("/{id}")
@@ -27,8 +28,8 @@ public class BoardController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<BoardResponseDto> updateCount(@PathVariable Long id, @RequestBody BoardRequestDto boardRequestDto){
-        return ResponseEntity.ok(boardService.updatePost(id, boardRequestDto));
+    public ResponseEntity<BoardResponseDto> updateCount(@PathVariable Long id, @RequestBody BoardCombinedRequestDto boardCombinedRequestDto){
+        return ResponseEntity.ok(boardService.updatePost(id, boardCombinedRequestDto));
     }
 
     @PutMapping("/{id}/like")
@@ -37,8 +38,8 @@ public class BoardController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<BoardResponseDto> deletePost(@PathVariable Long id, @RequestBody String password){
-        boardService.deletePost(id, password);
+    public ResponseEntity<BoardResponseDto> deletePost(@PathVariable Long id, @RequestBody BoardPasswordRequestDto boardPasswordRequestDto){
+        boardService.deletePost(id, boardPasswordRequestDto);
         return ResponseEntity.noContent().build();
     }
 

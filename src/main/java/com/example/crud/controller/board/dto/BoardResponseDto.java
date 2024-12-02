@@ -1,6 +1,7 @@
 package com.example.crud.controller.board.dto;
 
 import com.example.crud.controller.board.entity.Category;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,5 +20,7 @@ public class BoardResponseDto {
     private String password;
     private int liked;
     private int count;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createDate;
 }

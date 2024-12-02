@@ -3,6 +3,7 @@ package com.example.crud.controller.board.entity;
 import com.example.crud.controller.comment.entity.CommentDb;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -34,7 +35,7 @@ public class BoardDb {
     @Column(nullable = false, length = 10)
     private String nickname;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false)
     private String password;
 
     @Enumerated(EnumType.STRING)
@@ -54,6 +55,7 @@ public class BoardDb {
     private List<CommentDb> comments = new ArrayList<>();
 
     @CreatedDate
+    @NotNull
     private LocalDateTime createdDate;
 
     public void updatePost(String content, String title, String category) {

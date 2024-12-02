@@ -15,6 +15,7 @@ import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactor
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.time.Duration;
 
@@ -22,18 +23,32 @@ import java.time.Duration;
 @EnableCaching
 public class CacheConfig {
 
+    private final ObjectMapper objectMapper;
+
+    public CacheConfig(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
+
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+        // key -> string, value -> object
         RedisTemplate<String, Object> template = new RedisTemplate<>();
+        // Redis와 연결 관리
         template.setConnectionFactory(redisConnectionFactory);
+        // key를 string으로 직렬화
+        template.setKeySerializer(new StringRedisSerializer());
+        // value를 json으로 직렬화 / 역직렬화
+        template.setValueSerializer(new GenericJackson2JsonRedisSerializer(objectMapper));
+
+        // bean으로 등록
         return template;
     }
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
         RedisStandaloneConfiguration config = new RedisStandaloneConfiguration();
-        config.setHostName("redis");
-        config.setPort(26379);
+        config.setHostName("localhost");
+        config.setPort(6379);
         return new LettuceConnectionFactory(config);
     }
 

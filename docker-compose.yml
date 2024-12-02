@@ -19,7 +19,7 @@ services:
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
       REDIS_HOST: redis
-      REDIS_PORT: 26379
+      REDIS_PORT: 6379
       REDIS_PASSWORD: ${DB_PASSWORD}
     ports:
       - "33333:33333"
@@ -32,7 +32,7 @@ services:
     image: redis:latest
     container_name: redis-cache
     ports:
-      - "26379:26379"
+      - "6379:6379"
     command: redis-server --requirepass your_password
     networks:
       - mine

@@ -1,6 +1,7 @@
 package com.example.crud.controller.comment.dto;
 
 import com.example.crud.controller.comment.entity.CommentDb;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 
@@ -13,9 +14,11 @@ public class CommentResponseDto {
     private Long id;
     private String content;
     private String nickname;
-    private LocalDateTime createdDate;
     private Long bigCommentId;
     private List<CommentResponseDto> smallComment;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+    private LocalDateTime createdDate;
 
     private CommentResponseDto(CommentDb commentDb, List<CommentResponseDto> smallCommentDto){
         this.id = commentDb.getId();

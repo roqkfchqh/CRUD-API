@@ -27,7 +27,6 @@ public class BoardMapper {
                 .title(boardRequestDto.getTitle())
                 .content(boardRequestDto.getContent())
                 .nickname(boardRequestDto.getNickname())
-                .password(boardRequestDto.getPassword())
                 .category(Category.valueOf(boardRequestDto.getCategory().toUpperCase()))
                 .build();
     }

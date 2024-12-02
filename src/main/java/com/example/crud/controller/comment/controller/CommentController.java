@@ -2,7 +2,8 @@ package com.example.crud.controller.comment.controller;
 
 import com.example.crud.controller.board.entity.BoardDb;
 import com.example.crud.controller.board.repository.BoardRepository;
-import com.example.crud.controller.comment.dto.CommentRequestDto;
+import com.example.crud.controller.comment.dto.CommentCombinedRequestDto;
+import com.example.crud.controller.comment.dto.CommentPasswordRequestDto;
 import com.example.crud.controller.comment.dto.CommentResponseDto;
 import com.example.crud.controller.comment.service.CommentService;
 import com.example.crud.controller.common.exception.CustomException;
@@ -21,8 +22,8 @@ public class CommentController {
     private final BoardRepository boardRepository;
 
     @PostMapping
-    public ResponseEntity<CommentResponseDto> createComment(@RequestBody Long boardId, @RequestBody CommentRequestDto commentRequestDto) {
-        return ResponseEntity.ok(commentService.createComment(boardId, commentRequestDto));
+    public ResponseEntity<CommentResponseDto> createComment(@RequestBody Long boardId, @RequestBody CommentCombinedRequestDto commentCombinedRequestDto) {
+        return ResponseEntity.ok(commentService.createComment(boardId, commentCombinedRequestDto));
     }
 
     @GetMapping("/{boardId}")
@@ -35,13 +36,13 @@ public class CommentController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CommentResponseDto> updateComment(@RequestBody Long boardId, @PathVariable Long id, @RequestBody CommentRequestDto commentRequestDto) {
-        return ResponseEntity.ok(commentService.updateComment(boardId, id, commentRequestDto));
+    public ResponseEntity<CommentResponseDto> updateComment(@RequestBody Long boardId, @PathVariable Long id, @RequestBody CommentCombinedRequestDto commentCombinedRequestDto) {
+        return ResponseEntity.ok(commentService.updateComment(boardId, id, commentCombinedRequestDto));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<CommentResponseDto> deleteComment(@RequestBody Long boardId, @PathVariable Long id, @RequestBody String password) {
-        commentService.deleteComment(boardId, id, password);
+    public ResponseEntity<CommentResponseDto> deleteComment(@RequestBody Long boardId, @PathVariable Long id, @RequestBody CommentPasswordRequestDto commentPasswordRequestDto) {
+        commentService.deleteComment(boardId, id, commentPasswordRequestDto);
         return ResponseEntity.noContent().build();
     }
 }

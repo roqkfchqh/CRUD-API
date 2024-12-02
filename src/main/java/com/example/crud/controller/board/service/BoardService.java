@@ -1,9 +1,7 @@
 package com.example.crud.controller.board.service;
 
+import com.example.crud.controller.board.dto.*;
 import com.example.crud.controller.common.exception.ErrorCode;
-import com.example.crud.controller.board.dto.BoardMapper;
-import com.example.crud.controller.board.dto.BoardRequestDto;
-import com.example.crud.controller.board.dto.BoardResponseDto;
 import com.example.crud.controller.board.entity.BoardDb;
 import com.example.crud.controller.board.repository.BoardRepository;
 import com.example.crud.controller.common.exception.CustomException;
@@ -35,16 +33,16 @@ public class BoardService {
 
     //create
     @CacheEvict(value = "boards", allEntries = true)
-    public BoardResponseDto createPost(BoardRequestDto boardRequestDto) {
-        String encodedPassword = passwordEncoder.encode(boardRequestDto.getPassword());
-        BoardDb boardDb = BoardMapper.fromRequestDto(boardRequestDto);
+    public BoardResponseDto createPost(BoardCombinedRequestDto boardCombinedRequestDto) {
+        String encodedPassword = passwordEncoder.encode(boardCombinedRequestDto.getBoardPasswordRequestDto().getPassword());
+        BoardDb boardDb = BoardMapper.fromRequestDto(boardCombinedRequestDto.getBoardRequestDto());
         boardDb.setPassword(encodedPassword);
         boardRepository.save(boardDb);
         return BoardMapper.toResponseDto(boardDb);
     }
 
     //read
-    @Cacheable(value = "posts", key = "#id")
+    @Cacheable(value = "posts", key = "#id", unless="#result == null")
     public BoardResponseDto readPost(Long id) {
         BoardDb boardDb = boardRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
@@ -57,22 +55,26 @@ public class BoardService {
     }
 
     //update
-    @CachePut(value = "posts", key = "#id")
-    public BoardResponseDto updatePost(Long id, BoardRequestDto boardRequestDto) {
+    @CachePut(value = "posts", key = "#id", unless = "#result == null")
+    public BoardResponseDto updatePost(Long id, BoardCombinedRequestDto boardCombinedRequestDto) {
         BoardDb boardDb = boardRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
-        if (!passwordEncoder.matches(boardRequestDto.getPassword(), boardDb.getPassword())) {
+        if (!passwordEncoder.matches(boardCombinedRequestDto.getBoardPasswordRequestDto().getPassword(), boardDb.getPassword())) {
             throw new CustomException(ErrorCode.BAD_REQUEST);
         }
 
-        boardDb.updatePost(boardRequestDto.getContent(), boardRequestDto.getTitle(), boardRequestDto.getCategory());
+        boardDb.updatePost(
+                boardCombinedRequestDto.getBoardRequestDto().getContent(),
+                boardCombinedRequestDto.getBoardRequestDto().getTitle(),
+                boardCombinedRequestDto.getBoardRequestDto().getCategory()
+        );
 
         boardRepository.save(boardDb);
         return BoardMapper.toResponseDto(boardDb);
     }
 
     //like
-    @CachePut(value = "posts", key = "#id")
+    @CachePut(value = "posts", key = "#id", unless = "#result == null")
     public BoardResponseDto likePost(Long id) {
         BoardDb boardDb = boardRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
@@ -83,40 +85,40 @@ public class BoardService {
     }
 
     //delete
-    @CachePut(value = "posts", key = "#id")
+    @CachePut(value = "posts", key = "#id", unless = "#result == null")
     @CacheEvict(value = "boards", allEntries = true)
-    public void deletePost(Long id, String password) {
+    public void deletePost(Long id, BoardPasswordRequestDto boardPasswordRequestDto) {
         BoardDb boardDb = boardRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
-        if (!passwordEncoder.matches(password, boardDb.getPassword())) {
+        if (!passwordEncoder.matches(boardPasswordRequestDto.getPassword(), boardDb.getPassword())) {
             throw new CustomException(ErrorCode.BAD_REQUEST);
         }
         boardRepository.deleteById(id);
     }
 
     //paging
-    @Cacheable(value = "boards", key = "#page + '-' + #size")
+    @Cacheable(value = "boards", key = "#page + '-' + #size", unless="#result == null")
     public Page<BoardResponseDto> pagingBoard(int page, int size){
         extracted(page, size);
-        Pageable pageable = PageRequest.of(page -1, size, Sort.by("createDate").descending());
+        Pageable pageable = PageRequest.of(page -1, size, Sort.by("createdDate").descending());
         return boardRepository.findAll(pageable)
                 .map(BoardMapper::toResponseDto);
     }
 
     //category paging
-    @Cacheable(value = "boards", key = "#category + '-' + #page + '-' + #size")
+    @Cacheable(value = "boards", key = "#category + '-' + #page + '-' + #size", unless="#result == null")
     public Page<BoardResponseDto> pagingCategory(String category, int page, int size){
         extracted(page, size);
-        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("createDate").descending());
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("createdDate").descending());
         return boardRepository.findByCategory(category.toUpperCase(), pageable)
                 .map(BoardMapper::toResponseDto);
     }
 
     //search paging
-    @Cacheable(value = "boards", key = "#keyword + '-' + #page + '-' + #size")
+    @Cacheable(value = "boards", key = "#keyword + '-' + #page + '-' + #size", unless="#result == null")
     public Page<BoardResponseDto> pagingSearch(String keyword, int page, int size){
         extracted(page, size);
-        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("createDate").descending());
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("createdDate").descending());
         return boardRepository.findByTitleContaining(keyword, pageable)
                 .map(BoardMapper::toResponseDto);
     }
