@@ -9,6 +9,8 @@ import com.example.crud.controller.comment.repository.CommentRepository;
 import com.example.crud.controller.common.exception.CustomException;
 import com.example.crud.controller.common.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,8 +25,9 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final PasswordEncoder passwordEncoder;
 
-    //createComment
-    public CommentResponseDto createComment(CommentRequestDto commentRequestDto) {
+    //create
+    @CachePut(value = "comments", key = "'Post: ' + #boardId")
+    public CommentResponseDto createComment(Long boardId, CommentRequestDto commentRequestDto) {
         String encodedPassword = passwordEncoder.encode(commentRequestDto.getPassword());
         CommentDb commentDb = CommentMapper.fromCommentRequestDto(commentRequestDto);
         commentDb.setPassword(encodedPassword);
@@ -32,7 +35,8 @@ public class CommentService {
         return CommentMapper.toCommentResponseDto(commentDb);
     }
 
-    //getComment
+    //get
+    @Cacheable(value = "comments", key = "'Post: ' + #boardDb.getId()")
     public Page<CommentResponseDto> getCommentsBoard(BoardDb boardDb, int page, int size){
         Pageable pageable = PageRequest.of(page, size, Sort.by("createDate").descending());
         Page<CommentDb> commentsPage = commentRepository.findByBoard(boardDb, pageable);
@@ -41,7 +45,8 @@ public class CommentService {
     }
 
     //update
-    public CommentResponseDto updateComment(Long id, CommentRequestDto commentRequestDto) {
+    @CachePut(value = "comments", key = "'Post: ' + #boardId")
+    public CommentResponseDto updateComment(Long boardId, Long id, CommentRequestDto commentRequestDto) {
         CommentDb commentDb = commentRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
 
@@ -56,7 +61,8 @@ public class CommentService {
     }
 
     //delete
-    public void deleteComment(Long id, String password) {
+    @CachePut(value = "comments", key = "'Post: ' + #boardId")
+    public void deleteComment(Long boardId, Long id, String password) {
         CommentDb commentDb = commentRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
 
