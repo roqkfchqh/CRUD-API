@@ -1,8 +1,6 @@
 package com.example.crud.controller.comment.dto;
 
-import com.example.crud.controller.board.entity.BoardDb;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 

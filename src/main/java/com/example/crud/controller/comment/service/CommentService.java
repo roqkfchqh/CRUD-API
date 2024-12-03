@@ -1,6 +1,7 @@
 package com.example.crud.controller.comment.service;
 
 import com.example.crud.controller.board.entity.BoardDb;
+import com.example.crud.controller.board.repository.BoardRepository;
 import com.example.crud.controller.comment.dto.*;
 import com.example.crud.controller.comment.entity.CommentDb;
 import com.example.crud.controller.comment.repository.CommentRepository;
@@ -22,13 +23,18 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final PasswordEncoder passwordEncoder;
+    private final BoardRepository boardRepository;
 
     //create
     @CachePut(value = "comments", key = "'post: ' + #boardId", unless = "#result == null")
     public CommentResponseDto createComment(Long boardId, CommentCombinedRequestDto commentCombinedRequestDto) {
+        BoardDb boardDb = boardRepository.findById(boardId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
+
         String encodedPassword = passwordEncoder.encode(commentCombinedRequestDto.getCommentPasswordRequestDto().getPassword());
-        CommentDb commentDb = CommentMapper.fromCommentRequestDto(commentCombinedRequestDto.getCommentRequestDto());
+        CommentDb commentDb = CommentMapper.fromCommentRequestDto(commentCombinedRequestDto);
         commentDb.setPassword(encodedPassword);
+        commentDb.setBoard(boardDb);
         commentRepository.save(commentDb);
         return CommentMapper.toCommentResponseDto(commentDb);
     }

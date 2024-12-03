@@ -25,10 +25,11 @@ public class CommentMapper {
     }
 
     //dto -> entity
-    public static CommentDb fromCommentRequestDto(CommentRequestDto commentRequestDto){
+    public static CommentDb fromCommentRequestDto(CommentCombinedRequestDto commentCombinedRequestDto){
         return CommentDb.builder()
-                .nickname(commentRequestDto.getNickname())
-                .content(commentRequestDto.getContent())
+                .nickname(commentCombinedRequestDto.getCommentRequestDto().getNickname())
+                .content(commentCombinedRequestDto.getCommentRequestDto().getContent())
+                .password(commentCombinedRequestDto.getCommentPasswordRequestDto().getPassword())
                 .build();
     }
 

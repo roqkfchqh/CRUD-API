@@ -2,6 +2,7 @@ package com.example.crud.controller.comment.entity;
 
 import com.example.crud.controller.board.entity.BoardDb;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;

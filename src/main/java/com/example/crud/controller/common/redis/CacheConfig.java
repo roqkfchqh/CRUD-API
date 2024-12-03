@@ -1,8 +1,7 @@
-package com.example.crud.controller.common.config;
+package com.example.crud.controller.common.redis;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -54,9 +53,6 @@ public class CacheConfig {
 
     @Bean
     public RedisCacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) { // Redis 서버와의 연결을 생성하는 데 사용되는 팩토리 클래스
-        // 설정 구성
-        // ObjectMapper : Java 객체를 JSON으로 직렬화하거나 JSON을 Java 객체로 역직렬화하는 데 사용
-        ObjectMapper objectMapper = new ObjectMapper();
         // activateDefaultTyping : 객체가 직렬화될 때 해당 타입 정보를 JSON에 포함시킬 수 있고, 이를 이용해 역직렬화 할 때 어떤 클래스의 인스턴스인지 확읺한다.
         objectMapper.activateDefaultTyping(objectMapper.getPolymorphicTypeValidator(), ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
 

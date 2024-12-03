@@ -1,6 +1,7 @@
 package com.example.crud.controller.board.entity;
 
 import com.example.crud.controller.comment.entity.CommentDb;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -40,6 +41,7 @@ public class BoardDb {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @Builder.Default
     private Category category = Category.FREE;
 
     @Builder.Default
@@ -52,6 +54,7 @@ public class BoardDb {
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
+    @Builder.Default
     private List<CommentDb> comments = new ArrayList<>();
 
     @CreatedDate
