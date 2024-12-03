@@ -32,7 +32,7 @@ public class BoardController {
         return ResponseEntity.ok(boardService.updatePost(id, boardCombinedRequestDto));
     }
 
-    @PutMapping("/{id}/like")
+    @PutMapping("/{id}/likes")
     public ResponseEntity<BoardResponseDto> likePost(@PathVariable Long id){
         return ResponseEntity.ok(boardService.likePost(id));
     }
@@ -43,17 +43,17 @@ public class BoardController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/page")
+    @GetMapping("/pages")
     public ResponseEntity<Page<BoardResponseDto>> getPagedBoard(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size){
         return ResponseEntity.ok(boardService.pagingBoard(page, size));
     }
 
-    @GetMapping("/page/category/{keyword}")
+    @GetMapping("/category/{keyword}")
     public ResponseEntity<Page<BoardResponseDto>> getCategoryBoard(@PathVariable String keyword, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size){
         return ResponseEntity.ok(boardService.pagingCategory(keyword, page, size));
     }
 
-    @GetMapping("/page/search/{keyword}")
+    @GetMapping("/search/{keyword}")
     public ResponseEntity<Page<BoardResponseDto>> getSearchBoard(@PathVariable String keyword, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size){
         return ResponseEntity.ok(boardService.pagingSearch(keyword, page, size));
     }

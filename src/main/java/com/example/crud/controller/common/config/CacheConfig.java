@@ -57,8 +57,6 @@ public class CacheConfig {
         // 설정 구성
         // ObjectMapper : Java 객체를 JSON으로 직렬화하거나 JSON을 Java 객체로 역직렬화하는 데 사용
         ObjectMapper objectMapper = new ObjectMapper();
-        // registerModule : Java 8의 날짜 및 시간 API (LocalDate, LocalDateTime 등)를 직렬화
-        objectMapper.registerModule(new JavaTimeModule());
         // activateDefaultTyping : 객체가 직렬화될 때 해당 타입 정보를 JSON에 포함시킬 수 있고, 이를 이용해 역직렬화 할 때 어떤 클래스의 인스턴스인지 확읺한다.
         objectMapper.activateDefaultTyping(objectMapper.getPolymorphicTypeValidator(), ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
 

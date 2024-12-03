@@ -24,7 +24,7 @@ public class CommentService {
     private final PasswordEncoder passwordEncoder;
 
     //create
-    @CachePut(value = "comments", key = "'Post: ' + #boardId", unless = "#result == null")
+    @CachePut(value = "comments", key = "'post: ' + #boardId", unless = "#result == null")
     public CommentResponseDto createComment(Long boardId, CommentCombinedRequestDto commentCombinedRequestDto) {
         String encodedPassword = passwordEncoder.encode(commentCombinedRequestDto.getCommentPasswordRequestDto().getPassword());
         CommentDb commentDb = CommentMapper.fromCommentRequestDto(commentCombinedRequestDto.getCommentRequestDto());
@@ -34,7 +34,7 @@ public class CommentService {
     }
 
     //get
-    @Cacheable(value = "comments", key = "'Post: ' + #boardDb.getId()", unless="#result == null")
+    @Cacheable(value = "comments", key = "'post: ' + #boardDb.getId()", unless="#result == null")
     public Page<CommentResponseDto> getCommentsBoard(BoardDb boardDb, int page, int size){
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
         Page<CommentDb> commentsPage = commentRepository.findByBoard(boardDb, pageable);
@@ -43,7 +43,7 @@ public class CommentService {
     }
 
     //update
-    @CachePut(value = "comments", key = "'Post: ' + #boardId", unless = "#result == null")
+    @CachePut(value = "comments", key = "'post: ' + #boardId", unless = "#result == null")
     public CommentResponseDto updateComment(Long boardId, Long id, CommentCombinedRequestDto commentCombinedRequestDto) {
         CommentDb commentDb = commentRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
@@ -59,7 +59,7 @@ public class CommentService {
     }
 
     //delete
-    @CachePut(value = "comments", key = "'Post: ' + #boardId", unless = "#result == null")
+    @CachePut(value = "comments", key = "'post: ' + #boardId", unless = "#result == null")
     public void deleteComment(Long boardId, Long id, CommentPasswordRequestDto commentPasswordRequestDto) {
         CommentDb commentDb = commentRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));

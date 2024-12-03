@@ -22,7 +22,8 @@ public class CommentController {
     private final BoardRepository boardRepository;
 
     @PostMapping
-    public ResponseEntity<CommentResponseDto> createComment(@RequestBody Long boardId, @RequestBody CommentCombinedRequestDto commentCombinedRequestDto) {
+    public ResponseEntity<CommentResponseDto> createComment(@RequestBody CommentCombinedRequestDto commentCombinedRequestDto) {
+        Long boardId = commentCombinedRequestDto.getCommentPasswordRequestDto().getBoardId();
         return ResponseEntity.ok(commentService.createComment(boardId, commentCombinedRequestDto));
     }
 
@@ -36,12 +37,14 @@ public class CommentController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CommentResponseDto> updateComment(@RequestBody Long boardId, @PathVariable Long id, @RequestBody CommentCombinedRequestDto commentCombinedRequestDto) {
+    public ResponseEntity<CommentResponseDto> updateComment(@PathVariable Long id, @RequestBody CommentCombinedRequestDto commentCombinedRequestDto) {
+        Long boardId = commentCombinedRequestDto.getCommentPasswordRequestDto().getBoardId();
         return ResponseEntity.ok(commentService.updateComment(boardId, id, commentCombinedRequestDto));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<CommentResponseDto> deleteComment(@RequestBody Long boardId, @PathVariable Long id, @RequestBody CommentPasswordRequestDto commentPasswordRequestDto) {
+    public ResponseEntity<CommentResponseDto> deleteComment(@PathVariable Long id, @RequestBody CommentPasswordRequestDto commentPasswordRequestDto) {
+        Long boardId = commentPasswordRequestDto.getBoardId();
         commentService.deleteComment(boardId, id, commentPasswordRequestDto);
         return ResponseEntity.noContent().build();
     }

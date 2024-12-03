@@ -137,7 +137,7 @@ public class BoardService {
     }
 
     public void cacheWithDynamicTTL(BoardDb boardDb) {
-        String cacheKey = "post: " + boardDb.getId();
+        String cacheKey = "posts: " + boardDb.getId();
 
         long viewThreshold = 100;   //조회수 임계값
         long likeThreshold = 30;    //좋아요 임계값

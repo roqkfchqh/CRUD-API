@@ -19,7 +19,4 @@ public class CommentRequestDto {
     @NotBlank(message = "닉네임을 입력해주세요.")
     @Size(min = 2, max = 10, message = "닉네임은 2자 이상 10자 이하로만 가능합니다.")
     private String nickname;
-
-    @NotNull(message = "잘못된 접근입니다.")
-    private BoardDb boardDb;
 }

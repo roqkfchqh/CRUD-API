@@ -29,7 +29,6 @@ public class CommentMapper {
         return CommentDb.builder()
                 .nickname(commentRequestDto.getNickname())
                 .content(commentRequestDto.getContent())
-                .board(commentRequestDto.getBoardDb())
                 .build();
     }
 
