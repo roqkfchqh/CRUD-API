@@ -59,10 +59,10 @@ public class Board extends DateTimeEntity {
     @Builder.Default
     private List<Comment> comments = new ArrayList<>();
 
-    public void updatePost(String content, String title, String category) {
+    public void updatePost(String content, String title, Category category) {
         this.content = content;
         this.title = title;
-        this.category = Category.valueOf(category);
+        this.category = category;
     }
 
     public void updateLiked(int liked) {

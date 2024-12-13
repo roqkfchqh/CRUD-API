@@ -4,12 +4,12 @@ import com.example.crud.application.dto.board.BoardRequestDto;
 import com.example.crud.application.dto.board.BoardResponseDto;
 
 import com.example.crud.domain.board_root.aggregate.Board;
-import com.example.crud.domain.board_root.valueobjects.Category;
+import com.example.crud.domain.user_root.aggregate.User;
 
 public class BoardMapper {
 
-    //엔티티 -> DTO
-    public static BoardResponseDto toResponseDto(Board board){
+    //entity -> dto
+    public static BoardResponseDto toDto(Board board){
         String hotTitle = board.getLiked() > 10 ? "\uD83D\uDD25 " + board.getTitle() : board.getTitle();
         return BoardResponseDto.builder()
                 .id(board.getId())
@@ -24,14 +24,24 @@ public class BoardMapper {
                 .build();
     }
 
-    //DTO -> 엔티티
-    public static Board fromRequestDto(BoardRequestDto boardRequestDto){
+    //dto -> entity
+    public static Board toEntity(BoardRequestDto boardRequestDto, User user){
         return Board.builder()
                 .title(boardRequestDto.getTitle())
                 .content(boardRequestDto.getContent())
-                .nickname(boardRequestDto.getNickname())
-                .category(Category.valueOf(boardRequestDto.getCategory().toUpperCase()))
+                .category(boardRequestDto.getCategory())
+                .user(user)
                 .build();
+    }
+
+    //entity -> dto
+    public static Board toDtoWithAnonymous(Board board){
+        return null;
+    }
+
+    //dto -> entity
+    public static Board toEntityWithAnonymous(BoardRequestDto dto){
+        return null;
     }
 
 }

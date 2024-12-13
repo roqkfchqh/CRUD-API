@@ -1,0 +1,32 @@
+package com.example.crud.domain.board_root.service;
+
+import com.example.crud.application.exception.CustomException;
+import com.example.crud.application.exception.errorcode.ErrorCode;
+import com.example.crud.domain.board_root.aggregate.Board;
+import com.example.crud.domain.board_root.repository.BoardRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@RequiredArgsConstructor
+public class BoardValidationService {
+
+    private final BoardRepository boardRepository;
+
+    @Transactional(readOnly = true)
+    public Board validateBoard(Long id){
+        return boardRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.CONTENT_NOT_FOUND));
+    }
+
+    public Pageable validatePageSize(int page, int size) {
+        if (page < 1 || size < 1) {
+            throw new CustomException(ErrorCode.PAGING_ERROR);
+        }
+        return PageRequest.of(page - 1, size, Sort.by("createdDate").descending());
+    }
+}

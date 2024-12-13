@@ -23,7 +23,7 @@ public enum ErrorCode {
 
     //404
     COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 댓글이 존재하지 않습니다."),
-    CONTENT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 일정이 존재하지 않습니다."),
+    CONTENT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 게시글이 존재하지 않습니다."),
     NOT_FOUND(HttpStatus.NOT_FOUND, "없는 페이지입니다."),
 
     //429
