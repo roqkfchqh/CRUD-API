@@ -31,8 +31,8 @@ public class AuthFilter implements Filter {
             return;
         }
 
-        //비로그인 사용자일 경우 nickname, password 요청
-        if (req.getRequestURI().startsWith("/api/posts") || req.getRequestURI().startsWith("/api/comments")) {
+        //비로그인 사용자일 경우 nickname, password 요청(수정 살짝해야됨)
+        if (req.getRequestURI().startsWith("/api/boards") || req.getRequestURI().startsWith("/api/comments")) {
             String nickname = req.getParameter("nickname");
             String password = req.getParameter("password");
 

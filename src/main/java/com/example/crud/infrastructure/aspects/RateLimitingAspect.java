@@ -25,9 +25,8 @@ public class RateLimitingAspect {
             "execution(* com.example.crud.interfaces.rest.comment.CommentController.createComment(..))")
     public Object checkRateLimit(ProceedingJoinPoint joinPoint) throws Throwable {
         String key = getKey();
-        if(!redisRateLimiter.isAllowed(key)){
-            throw new CustomException(ErrorCode.TOO_MANY_REQUESTS);
-        }
+        redisRateLimiter.isAllowed(key);
+
         return joinPoint.proceed();
     }
 
@@ -36,12 +35,9 @@ public class RateLimitingAspect {
             "execution(* com.example.crud.interfaces.rest.board.BoardController.readPost(..))")
     public Object checkRateLimitLikeAndReadPost(ProceedingJoinPoint joinPoint) throws Throwable {
         String key = getKey();
-        Object[] args = joinPoint.getArgs();
-        Long boardId = getBoardId(args);
+        Long boardId = getBoardId(joinPoint.getArgs());
+        redisRateLimiter.isAllowedLikeAndRead(key, boardId);
 
-        if(!redisRateLimiter.isAllowedLikeAndRead(key, boardId)){
-            throw new CustomException(ErrorCode.TOO_MANY_REQUESTS);
-        }
         return joinPoint.proceed();
     }
 
