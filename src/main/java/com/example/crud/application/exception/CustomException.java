@@ -1,15 +1,11 @@
 package com.example.crud.application.exception;
 
-import lombok.Getter;
+import com.example.crud.application.exception.errorcode.ErrorCode;
 
-@Getter
-public class CustomException extends RuntimeException {
-
-    private final ErrorCode errorCode;
+public class CustomException extends BaseException {
 
     public CustomException(ErrorCode errorCode) {
-        super(errorCode.getMessage());
-        this.errorCode = errorCode;
+        super(errorCode.getMessage(), errorCode.getStatus());
     }
 
 }

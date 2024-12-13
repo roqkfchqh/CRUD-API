@@ -32,14 +32,14 @@ public class CacheConfig {
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
         // key -> string, value -> object
         RedisTemplate<String, Object> template = new RedisTemplate<>();
-        // Redis와 연결 관리
+        // Redis 와 연결 관리
         template.setConnectionFactory(redisConnectionFactory);
-        // key를 string으로 직렬화
+        // key 를 string 으로 직렬화
         template.setKeySerializer(new StringRedisSerializer());
-        // value를 json으로 직렬화 / 역직렬화
+        // value 를 json 으로 직렬화 / 역직렬화
         template.setValueSerializer(new GenericJackson2JsonRedisSerializer(objectMapper));
 
-        // bean으로 등록
+        // bean 으로 등록
         return template;
     }
 
@@ -53,13 +53,13 @@ public class CacheConfig {
 
     @Bean
     public RedisCacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) { // Redis 서버와의 연결을 생성하는 데 사용되는 팩토리 클래스
-        // activateDefaultTyping : 객체가 직렬화될 때 해당 타입 정보를 JSON에 포함시킬 수 있고, 이를 이용해 역직렬화 할 때 어떤 클래스의 인스턴스인지 확읺한다.
+        // activateDefaultTyping : 객체가 직렬화될 때 해당 타입 정보를 JSON 에 포함시킬 수 있고, 이를 이용해 역직렬화 할 때 어떤 클래스의 인스턴스인지 확읺한다.
         objectMapper.activateDefaultTyping(objectMapper.getPolymorphicTypeValidator(), ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
 
-        // Redis를 이용해서 Spring Cache를 사용할 때 Redis 관련 설정을 모아두는 클래스
+        // Redis 를 이용해서 Spring Cache 를 사용할 때 Redis 관련 설정을 모아두는 클래스
         RedisCacheConfiguration configuration = RedisCacheConfiguration
                 .defaultCacheConfig()
-                // null을 캐싱 할것인지
+                // null 을 캐싱 할것인지
                 .disableCachingNullValues()
                 // 기본 캐시 유지 시간 (Time To Live)
                 .entryTtl(Duration.ofSeconds(20))

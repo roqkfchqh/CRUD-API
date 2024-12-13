@@ -1,31 +1,32 @@
 package com.example.crud.application.mapper;
 
-import com.example.crud.application.dto.BoardRequestDto;
-import com.example.crud.application.dto.BoardResponseDto;
-import com.example.crud.domain.model.entities.BoardDb;
-import com.example.crud.domain.model.valueobjects.Category;
+import com.example.crud.application.dto.board.BoardRequestDto;
+import com.example.crud.application.dto.board.BoardResponseDto;
+
+import com.example.crud.domain.board_root.aggregate.Board;
+import com.example.crud.domain.board_root.valueobjects.Category;
 
 public class BoardMapper {
 
     //엔티티 -> DTO
-    public static BoardResponseDto toResponseDto(BoardDb boardDb){
-        String hotTitle = boardDb.getLiked() > 10 ? "\uD83D\uDD25 " + boardDb.getTitle() : boardDb.getTitle();
+    public static BoardResponseDto toResponseDto(Board board){
+        String hotTitle = board.getLiked() > 10 ? "\uD83D\uDD25 " + board.getTitle() : board.getTitle();
         return BoardResponseDto.builder()
-                .id(boardDb.getId())
+                .id(board.getId())
                 .title(hotTitle)
-                .content(boardDb.getContent())
-                .nickname(boardDb.getNickname())
-                .category(boardDb.getCategory())
-                .password(boardDb.getPassword())
-                .liked(boardDb.getLiked())
-                .count(boardDb.getCount())
-                .createDate(boardDb.getCreatedDate())
+                .content(board.getContent())
+                .nickname(board.getNickname())
+                .category(board.getCategory())
+                .password(board.getPassword())
+                .liked(board.getLiked())
+                .count(board.getCount())
+                .createDate(board.getCreatedAt())
                 .build();
     }
 
     //DTO -> 엔티티
-    public static BoardDb fromRequestDto(BoardRequestDto boardRequestDto){
-        return BoardDb.builder()
+    public static Board fromRequestDto(BoardRequestDto boardRequestDto){
+        return Board.builder()
                 .title(boardRequestDto.getTitle())
                 .content(boardRequestDto.getContent())
                 .nickname(boardRequestDto.getNickname())

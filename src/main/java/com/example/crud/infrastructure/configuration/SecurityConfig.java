@@ -1,7 +1,7 @@
 package com.example.crud.infrastructure.configuration;
 
-import com.example.crud.application.exception.CustomAccessDeniedHandler;
-import com.example.crud.application.exception.CustomAuthenticationEntryPoint;
+import com.example.crud.application.exception.handler.CustomAccessDeniedHandler;
+import com.example.crud.application.exception.handler.CustomAuthenticationEntryPoint;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
