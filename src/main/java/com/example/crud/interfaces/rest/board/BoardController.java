@@ -1,10 +1,13 @@
 package com.example.crud.interfaces.rest.board;
 
-import com.example.crud.application.dto.board.BoardCombinedRequestDto;
+import com.example.crud.application.dto.board.BoardRequestDto;
 import com.example.crud.application.dto.board.BoardResponseDto;
-import com.example.crud.application.dto.board.BoardPasswordRequestDto;
+import com.example.crud.application.exception.CustomException;
+import com.example.crud.application.exception.errorcode.ErrorCode;
 import com.example.crud.domain.board_root.service.BoardService;
 
+import com.example.crud.domain.user_root.aggregate.User;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -18,18 +21,57 @@ public class BoardController {
     private final BoardService boardService;
 
     @PostMapping
-    public ResponseEntity<BoardResponseDto> createPost(@RequestBody BoardCombinedRequestDto boardCombinedRequestDto){
-        return ResponseEntity.ok(boardService.createPost(boardCombinedRequestDto));
+    public ResponseEntity<BoardResponseDto> createPost(
+            HttpServletRequest req,
+            @RequestBody BoardRequestDto dto){
+
+        User sessionUser = (User) req.getSession().getAttribute("user");
+
+        if (sessionUser != null) {
+            //로그인 사용자
+            boardService.createPost(sessionUser, dto);
+        } else {
+            //비로그인 사용자
+            String nickname = req.getParameter("nickname");
+            String password = req.getParameter("password");
+
+            if(nickname == null || password == null){
+                throw new CustomException(ErrorCode.BAD_GATEWAY);
+            }
+
+            boardService.createPostForAnonymous(nickname, password, dto);
+        }
+
+        return ResponseEntity.ok(boardService.readPost(dto));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BoardResponseDto> readPost(@PathVariable Long id){
+    public ResponseEntity<BoardResponseDto> readPost(
+            @PathVariable Long id){
         return ResponseEntity.ok(boardService.readPost(id));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<BoardResponseDto> updateCount(@PathVariable Long id, @RequestBody BoardCombinedRequestDto boardCombinedRequestDto){
-        return ResponseEntity.ok(boardService.updatePost(id, boardCombinedRequestDto));
+    public ResponseEntity<BoardResponseDto> updateCount(
+            @PathVariable Long id,
+            @RequestBody BoardRequestDto dto){
+        User sessionUser = (User) req.getSession().getAttribute("user");
+
+        if (sessionUser != null) {
+            //로그인 사용자
+            boardService.updatePost(sessionUser, dto);
+        } else {
+            //비로그인 사용자
+            String password = req.getParameter("password");
+
+            if(password == null){
+                throw new CustomException(ErrorCode.BAD_GATEWAY);
+            }
+
+            boardService.updatePostForAnonymous(password, dto);
+        }
+
+        return ResponseEntity.ok(boardService.updatePost(id, dto));
     }
 
     @PutMapping("/{id}/likes")

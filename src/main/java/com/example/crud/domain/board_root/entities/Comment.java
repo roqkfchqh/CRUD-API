@@ -26,7 +26,7 @@ public class Comment extends DateTimeEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private User user;
 
     @Column(updatable = false)
@@ -47,11 +47,13 @@ public class Comment extends DateTimeEntity {
     @JsonBackReference
     private Comment parentsComment;
 
-    @OneToMany(mappedBy = "parentsComment", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "parentsComment")
     @JsonManagedReference
     private List<Comment> childComment;
+
 
     public void updateContent(String content) {
         this.content = content;
     }
+
 }

@@ -27,7 +27,7 @@ public class Board extends DateTimeEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private User user;
 
     @Column(updatable = false)
@@ -54,7 +54,7 @@ public class Board extends DateTimeEntity {
     @Column(nullable = false)
     private int count = 0;
 
-    @OneToMany(mappedBy = "boards", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     @Builder.Default
     private List<Comment> comments = new ArrayList<>();

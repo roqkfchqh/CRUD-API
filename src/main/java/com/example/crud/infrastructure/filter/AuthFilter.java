@@ -1,5 +1,7 @@
 package com.example.crud.infrastructure.filter;
 
+import com.example.crud.application.exception.CustomException;
+import com.example.crud.application.exception.errorcode.ErrorCode;
 import com.example.crud.domain.user_root.service.UserService;
 import com.example.crud.domain.user_root.aggregate.User;
 import jakarta.servlet.*;
@@ -22,15 +24,22 @@ public class AuthFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
 
-        if (req.getRequestURI().startsWith("/swagger-ui/") || req.getRequestURI().startsWith("/v3/api-docs/")) {
-            chain.doFilter(request, response);
-            return;
-        }
-
+        //로그인 사용자인지 확인
         User sessionUser = (User) req.getSession().getAttribute("user");
         if(sessionUser != null){
             chain.doFilter(request, response);
             return;
+        }
+
+        //비로그인 사용자일 경우 nickname, password 요청
+        if (req.getRequestURI().startsWith("/api/posts") || req.getRequestURI().startsWith("/api/comments")) {
+            String nickname = req.getParameter("nickname");
+            String password = req.getParameter("password");
+
+            if(nickname == null || nickname.isEmpty() || password == null || password.isEmpty()){
+                res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                throw new CustomException(ErrorCode.BAD_GATEWAY);
+            }
         }
 
         Cookie[] cookies = req.getCookies();

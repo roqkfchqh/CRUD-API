@@ -2,7 +2,6 @@ package com.example.crud.infrastructure.persistence;
 
 import lombok.AllArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
@@ -11,18 +10,29 @@ import java.util.concurrent.TimeUnit;
 @AllArgsConstructor
 public class RedisRateLimiter {
 
-    private final StringRedisTemplate stringRedisTemplate;
     private final RedisTemplate<String, Object> redisTemplate;
 
-    public boolean isAllowed(String ip) {
-        String key = "rate_limit: " + ip;
+    public boolean isAllowed(String key) {
+        int limit = key.startsWith("rate_limit:user:") ? 10 : 2;
+        Long count = redisTemplate.opsForValue().increment(key);
 
-        Boolean exists = redisTemplate.hasKey(key);
-        if(exists) {
-            return false;
+        if(count == 1){
+            redisTemplate.expire(key, 1, TimeUnit.MINUTES);
         }
 
-        redisTemplate.opsForValue().set(key, "1", 30, TimeUnit.SECONDS);
-        return true;
+        return count <= limit;
+    }
+
+    public boolean isAllowedLikeAndRead(String key, Long boardId){
+        String redisKey = key + ":post:" + boardId;
+
+        int limit = key.startsWith("rate_limit:user:") ? 2 : 1;
+        Long count = redisTemplate.opsForValue().increment(redisKey);
+
+        if(count == 1){
+            redisTemplate.expire(redisKey, 1, TimeUnit.DAYS);
+        }
+
+        return count <= limit;
     }
 }

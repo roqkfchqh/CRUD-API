@@ -1,7 +1,5 @@
 package com.example.crud.domain.board_root.service;
 
-import com.example.crud.application.dto.board.BoardCombinedRequestDto;
-import com.example.crud.application.dto.board.BoardPasswordRequestDto;
 import com.example.crud.application.dto.board.BoardResponseDto;
 import com.example.crud.application.mapper.BoardMapper;
 import com.example.crud.application.exception.errorcode.ErrorCode;

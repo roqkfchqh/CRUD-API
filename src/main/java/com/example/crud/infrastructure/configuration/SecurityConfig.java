@@ -27,7 +27,7 @@ public class SecurityConfig {
         http.csrf((csrf) -> csrf.disable());
 
         http.sessionManagement((sessionManagement) ->
-                sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                sessionManagement.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
         );
 
         http.authorizeHttpRequests((authorizeHttpRequests) ->
