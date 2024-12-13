@@ -1,13 +1,15 @@
-package com.example.crud.interfaces.rest.user;
+package com.example.crud.domain.user_root.service;
 
 import com.example.crud.domain.user_root.aggregate.User;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.stereotype.Service;
 
-public class SessionAndCookie {
+@Service
+public class SessionAndCookieCheckingService {
 
-    public static void remember(HttpServletRequest req, HttpServletResponse res, User user) {
+    public void remember(HttpServletRequest req, HttpServletResponse res, User user) {
         req.getSession().setAttribute("user", user);
         req.getSession().setMaxInactiveInterval(1800);
 
@@ -19,7 +21,7 @@ public class SessionAndCookie {
         res.addCookie(rememberMeCookie);
     }
 
-    public static void delete(HttpServletRequest req, HttpServletResponse res) {
+    public void delete(HttpServletRequest req, HttpServletResponse res) {
         req.getSession().invalidate();
         Cookie rememberMeCookie = new Cookie("rememberMe", null);
         rememberMeCookie.setMaxAge(0);

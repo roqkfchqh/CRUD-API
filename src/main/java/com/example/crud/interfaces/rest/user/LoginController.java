@@ -3,6 +3,7 @@ package com.example.crud.interfaces.rest.user;
 import com.example.crud.application.dto.user.LoginRequestDto;
 import com.example.crud.application.exception.CustomException;
 import com.example.crud.application.exception.errorcode.ErrorCode;
+import com.example.crud.domain.user_root.service.SessionAndCookieCheckingService;
 import com.example.crud.domain.user_root.service.UserLoginService;
 import com.example.crud.domain.user_root.aggregate.User;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class LoginController {
 
     private final UserLoginService userLoginService;
+    private final SessionAndCookieCheckingService sessionAndCookieCheckingService;
 
     @PostMapping("/login")
     public ResponseEntity<String> login(
@@ -28,7 +30,7 @@ public class LoginController {
             HttpServletResponse res){
         User user = userLoginService.loginUser(dto);
         if(user != null) {
-            SessionAndCookie.remember(req, res, user);
+            sessionAndCookieCheckingService.remember(req, res, user);
 
             return ResponseEntity.ok("로그인 완료");
         }else{
@@ -43,7 +45,7 @@ public class LoginController {
         if(req.getSession().getAttribute("user") == null){
             throw new CustomException(ErrorCode.BAD_GATEWAY);
         }
-        SessionAndCookie.delete(req, res);
+        sessionAndCookieCheckingService.delete(req, res);
         return ResponseEntity.ok("로그아웃 완료");
     }
 }

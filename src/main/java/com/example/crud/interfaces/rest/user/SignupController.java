@@ -1,6 +1,7 @@
 package com.example.crud.interfaces.rest.user;
 
 import com.example.crud.application.dto.user.SignupRequestDto;
+import com.example.crud.domain.user_root.service.SessionAndCookieCheckingService;
 import com.example.crud.domain.user_root.service.UserSignupService;
 import com.example.crud.domain.user_root.aggregate.User;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class SignupController {
 
     private final UserSignupService userSignupService;
+    private final SessionAndCookieCheckingService sessionAndCookieCheckingService;
 
     @PostMapping("/signup")
     public ResponseEntity<String> signup(
@@ -27,7 +29,7 @@ public class SignupController {
             HttpServletResponse res) {
         User user = userSignupService.registerUser(dto);
 
-        SessionAndCookie.remember(req, res, user);
+        sessionAndCookieCheckingService.remember(req, res, user);
 
         return ResponseEntity.ok("회원가입 완료");
     }

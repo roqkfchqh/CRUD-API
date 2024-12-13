@@ -3,6 +3,7 @@ package com.example.crud.interfaces.rest.user;
 import com.example.crud.application.dto.user.CurrentPasswordRequestDto;
 import com.example.crud.application.dto.user.UpdateRequestDto;
 import com.example.crud.application.dto.user.UserResponseDto;
+import com.example.crud.domain.user_root.service.SessionAndCookieCheckingService;
 import com.example.crud.domain.user_root.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
+    private final SessionAndCookieCheckingService sessionAndCookieCheckingService;
 
     //read
     @GetMapping
@@ -42,7 +44,7 @@ public class UserController {
             HttpServletResponse res){
         userService.deleteUser(req, currentPasswordRequestDto);
         req.getSession().invalidate();
-        SessionAndCookie.delete(req, res);
+        sessionAndCookieCheckingService.delete(req, res);
         return ResponseEntity.ok("회원 탈퇴가 정상적으로 완료되었습니다.");
     }
 }
