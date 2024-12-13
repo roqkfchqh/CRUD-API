@@ -44,7 +44,7 @@ dependencies {
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 }
 
-tasks.withType(Test){
+tasks.withType(Test).configureEach {
 	useJUnitPlatform()
 	enabled = false
 }

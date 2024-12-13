@@ -1,0 +1,38 @@
+package com.example.crud.application.mapper;
+
+import com.example.crud.application.dto.CommentCombinedRequestDto;
+import com.example.crud.application.dto.CommentResponseDto;
+import com.example.crud.domain.model.entities.CommentDb;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class CommentMapper {
+
+    //entity -> dto
+    public static CommentResponseDto toCommentResponseDto(CommentDb commentDb){
+        return CommentResponseDto.builder()
+                .id(commentDb.getId())
+                .nickname(commentDb.getNickname())
+                .content(commentDb.getContent())
+                .createdDate(commentDb.getCreateDate())
+                .bigCommentId(commentDb.getBigComment() != null ? commentDb.getBigComment().getId() : null)
+                .smallComment(commentDb.getSmallComment() != null
+                        ? commentDb.getSmallComment().stream()
+                        .map(CommentMapper::toCommentResponseDto)
+                        .collect(Collectors.toList())
+                        : List.of()
+                )
+                .build();
+    }
+
+    //dto -> entity
+    public static CommentDb fromCommentRequestDto(CommentCombinedRequestDto commentCombinedRequestDto){
+        return CommentDb.builder()
+                .nickname(commentCombinedRequestDto.getCommentRequestDto().getNickname())
+                .content(commentCombinedRequestDto.getCommentRequestDto().getContent())
+                .password(commentCombinedRequestDto.getCommentPasswordRequestDto().getPassword())
+                .build();
+    }
+
+}
