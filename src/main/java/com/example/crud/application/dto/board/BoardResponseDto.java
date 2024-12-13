@@ -17,7 +17,6 @@ public class BoardResponseDto {
     private String content;
     private String nickname;
     private Category category;
-    private String password;
     private int liked;
     private int count;
 

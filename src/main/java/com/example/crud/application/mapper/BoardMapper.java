@@ -8,16 +8,17 @@ import com.example.crud.domain.user_root.aggregate.User;
 
 public class BoardMapper {
 
+    private final static int HOT_TITLE = 10;
+
     //entity -> dto
     public static BoardResponseDto toDto(Board board){
-        String hotTitle = board.getLiked() > 10 ? "\uD83D\uDD25 " + board.getTitle() : board.getTitle();
+        String hotTitle = board.getLiked() > HOT_TITLE ? "\uD83D\uDD25 " + board.getTitle() : board.getTitle();
         return BoardResponseDto.builder()
                 .id(board.getId())
                 .title(hotTitle)
                 .content(board.getContent())
                 .nickname(board.getNickname())
                 .category(board.getCategory())
-                .password(board.getPassword())
                 .liked(board.getLiked())
                 .count(board.getCount())
                 .createDate(board.getCreatedAt())
@@ -25,23 +26,25 @@ public class BoardMapper {
     }
 
     //dto -> entity
-    public static Board toEntity(BoardRequestDto boardRequestDto, User user){
+    public static Board toEntity(BoardRequestDto dto, User user){
         return Board.builder()
-                .title(boardRequestDto.getTitle())
-                .content(boardRequestDto.getContent())
-                .category(boardRequestDto.getCategory())
+                .title(dto.getTitle())
+                .content(dto.getContent())
+                .category(dto.getCategory())
+                .nickname(user.getName())
                 .user(user)
                 .build();
     }
 
-    //entity -> dto
-    public static Board toDtoWithAnonymous(Board board){
-        return null;
-    }
-
     //dto -> entity
-    public static Board toEntityWithAnonymous(BoardRequestDto dto){
-        return null;
+    public static Board toEntityWithAnonymous(BoardRequestDto dto, String encodedPassword, String nickname){
+        return Board.builder()
+                .title(dto.getTitle())
+                .content(dto.getContent())
+                .category(dto.getCategory())
+                .nickname(nickname)
+                .password(encodedPassword)
+                .build();
     }
 
 }

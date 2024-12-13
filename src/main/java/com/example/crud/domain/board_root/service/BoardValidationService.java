@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class BoardValidationService {
 
     private final BoardRepository boardRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)
     public Board validateBoard(Long id){
@@ -28,5 +30,12 @@ public class BoardValidationService {
             throw new CustomException(ErrorCode.PAGING_ERROR);
         }
         return PageRequest.of(page - 1, size, Sort.by("createdDate").descending());
+    }
+
+    public void validatePassword(Long id, String password){
+        String boardPassword = boardRepository.findPasswordById(id);
+        if(!passwordEncoder.matches(password, boardPassword)){
+            throw new CustomException(ErrorCode.WRONG_PASSWORD);
+        }
     }
 }

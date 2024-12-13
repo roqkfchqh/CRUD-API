@@ -2,6 +2,8 @@ package com.example.crud.domain.board_root.service;
 
 import com.example.crud.application.dto.board.BoardRequestDto;
 import com.example.crud.application.dto.board.BoardResponseDto;
+import com.example.crud.application.mapper.BoardMapper;
+import com.example.crud.domain.board_root.aggregate.Board;
 import com.example.crud.domain.board_root.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,20 +17,30 @@ public class BoardAnonymousService {
 
     private final BoardRepository boardRepository;
     private final PasswordEncoder passwordEncoder;
+    private final BoardValidationService boardValidationService;
 
     public BoardResponseDto createPostForAnonymous(String nickname, String password, BoardRequestDto dto){
+        String encodedPassword = passwordEncoder.encode(password);
+        Board board = BoardMapper.toEntityWithAnonymous(dto, nickname, encodedPassword);
 
-
-
-        return null;
+        boardRepository.save(board);
+        return BoardMapper.toDto(board);
     }
 
     public BoardResponseDto updatePostForAnonymous(String password, Long id, BoardRequestDto dto){
-        return null;
+        boardValidationService.validatePassword(id, password);
+        Board board = boardValidationService.validateBoard(id);
+
+        board.updatePost(dto.getTitle(), dto.getContent(), dto.getCategory());
+        boardRepository.save(board);
+
+        return BoardMapper.toDto(board);
     }
 
     public void deletePostForAnonymous(String password, Long id){
-
+        boardValidationService.validatePassword(id, password);
+        boardValidationService.validateBoard(id);
+        boardRepository.deleteById(id);
     }
 
 
