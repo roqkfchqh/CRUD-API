@@ -2,24 +2,25 @@ package com.example.crud.domain.board_root.service;
 
 import com.example.crud.application.dto.board.BoardRequestDto;
 import com.example.crud.application.dto.board.BoardResponseDto;
+import com.example.crud.application.dto.comment.CommentPasswordRequestDto;
+import com.example.crud.application.dto.comment.CommentRequestDto;
+import com.example.crud.application.dto.comment.CommentResponseDto;
 import com.example.crud.application.mapper.BoardMapper;
+import com.example.crud.application.mapper.CommentMapper;
 import com.example.crud.domain.board_root.aggregate.Board;
+import com.example.crud.domain.board_root.entities.Comment;
 import com.example.crud.domain.board_root.repository.BoardRepository;
+import com.example.crud.domain.board_root.repository.CommentRepository;
 import com.example.crud.domain.user_root.aggregate.User;
 import com.example.crud.domain.user_root.service.UserValidationService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.Duration;
 
 @Service
 @RequiredArgsConstructor
@@ -27,12 +28,10 @@ import java.time.Duration;
 public class BoardService {
 
     private final BoardRepository boardRepository;
+    private final CommentRepository commentRepository;
     private final UserValidationService userValidationService;
-
-    @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
-    @Autowired
-    private BoardValidationService boardValidationService;
+    private final BoardValidationService boardValidationService;
+    private final BoardAsyncService boardAsyncService;
 
     //create
     @CacheEvict(value = "boards", allEntries = true)
@@ -55,7 +54,7 @@ public class BoardService {
         board.updateCount(board.getCount() + 1);
         boardRepository.save(board);
 
-        updateViewCountAsync(board);
+        boardAsyncService.updateViewCountAsync(board);
         return BoardMapper.toDto(board);
     }
 
@@ -95,24 +94,29 @@ public class BoardService {
         boardRepository.deleteById(id);
     }
 
-    @Async
-    public void updateViewCountAsync(Board board) {
-        board.updateCount(board.getCount() + 1);
+    //create
+    @CachePut(value = "posts", key = "#boardId", unless = "#result == null")
+    public CommentResponseDto createComment(HttpServletRequest req, CommentRequestDto dto) {
+        Board board = boardValidationService.validateBoard(dto.getBoardId());
+        User user = userValidationService.validateUser(req);
+
+        Comment comment = CommentMapper.toEntity(dto, user, board);
+
+        board.addComment(comment);
         boardRepository.save(board);
-        cacheWithDynamicTTL(board); //비동기 처리
+
+        return CommentMapper.toDto(comment);
     }
 
-    public void cacheWithDynamicTTL(Board board) {
-        String cacheKey = "posts: " + board.getId();
+    //delete
+    @CachePut(value = "posts", key = "#boardId", unless = "#result == null")
+    public void deleteComment(HttpServletRequest req, CommentPasswordRequestDto dto, Long commentId) {
+        userValidationService.validateUser(req);
+        Board board = boardValidationService.validateBoard(dto.getBoardId());
+        Comment comment = boardValidationService.validateComment(commentId, board);
 
-        long viewThreshold = 100;   //조회수 임계값
-        long likeThreshold = 30;    //좋아요 임계값
-        Duration ttl = Duration.ofSeconds(20);  //기본 ttl
-
-        if(board.getCount() > viewThreshold || board.getLiked() > likeThreshold){
-            ttl = Duration.ofSeconds(180);  //hot data 는 ttl 3분으로 연장
-        }
-        redisTemplate.opsForValue().set(cacheKey, board, ttl);    //캐시에 저장, ttl 설정
+        board.removeComment(comment);
+        commentRepository.deleteById(commentId);
+        boardRepository.save(board);
     }
-
 }

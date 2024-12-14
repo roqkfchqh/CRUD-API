@@ -9,7 +9,13 @@ import lombok.*;
 @AllArgsConstructor
 public class CommentRequestDto {
 
+    private Long boardId;
+
     @NotBlank(message = "내용을 입력해주세요.")
-    @Size(max = 200, message = "너무길자나지금")
+    @Size(max = 100, message = "너무길자나지금")
     private String content;
+
+    //비로그인 사용자만
+    private String nickname;
+    private String password;
 }

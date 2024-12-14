@@ -24,7 +24,7 @@ public class BoardController {
             HttpServletRequest req,
             @Valid @RequestBody BoardRequestDto dto){
 
-        BoardResponseDto board = sessionCheckingService.getCreatePost(req, dto);
+        BoardResponseDto board = sessionCheckingService.CreatePost(req, dto);
 
         return ResponseEntity.ok(board);
     }
@@ -41,7 +41,7 @@ public class BoardController {
             @PathVariable Long id,
             @Valid @RequestBody BoardRequestDto dto){
 
-        BoardResponseDto board = sessionCheckingService.getUpdatePost(req, id, dto);
+        BoardResponseDto board = sessionCheckingService.UpdatePost(req, id, dto);
 
         return ResponseEntity.ok(board);
     }
@@ -57,7 +57,7 @@ public class BoardController {
             @PathVariable Long id,
             @Valid @RequestBody(required = false) BoardPasswordRequestDto dto){
 
-        sessionCheckingService.getDeletePost(req, id, dto);
+        sessionCheckingService.DeletePost(req, id, dto);
 
         return ResponseEntity.ok("해당 게시물이 정상적으로 삭제되었습니다.");
     }

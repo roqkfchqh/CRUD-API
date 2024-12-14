@@ -72,4 +72,14 @@ public class Board extends DateTimeEntity {
     public void updateCount(int count) {
         this.count = count;
     }
+
+    public void addComment(Comment comment) {
+        comments.add(comment);
+        comment.setBoard(this);
+    }
+
+    public void removeComment(Comment comment) {
+        comments.remove(comment);
+        comment.setBoard(null);
+    }
 }
