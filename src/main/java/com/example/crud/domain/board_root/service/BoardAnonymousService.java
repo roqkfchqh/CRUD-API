@@ -1,5 +1,6 @@
 package com.example.crud.domain.board_root.service;
 
+import com.example.crud.application.dto.board.BoardPasswordRequestDto;
 import com.example.crud.application.dto.board.BoardRequestDto;
 import com.example.crud.application.dto.board.BoardResponseDto;
 import com.example.crud.application.mapper.BoardMapper;
@@ -19,16 +20,16 @@ public class BoardAnonymousService {
     private final PasswordEncoder passwordEncoder;
     private final BoardValidationService boardValidationService;
 
-    public BoardResponseDto createPostForAnonymous(String nickname, String password, BoardRequestDto dto){
-        String encodedPassword = passwordEncoder.encode(password);
-        Board board = BoardMapper.toEntityWithAnonymous(dto, nickname, encodedPassword);
+    public BoardResponseDto createPostForAnonymous(BoardRequestDto dto){
+        String encodedPassword = passwordEncoder.encode(dto.getPassword());
+        Board board = BoardMapper.toEntityWithAnonymous(dto, encodedPassword);
 
         boardRepository.save(board);
         return BoardMapper.toDto(board);
     }
 
-    public BoardResponseDto updatePostForAnonymous(String password, Long id, BoardRequestDto dto){
-        boardValidationService.validatePassword(id, password);
+    public BoardResponseDto updatePostForAnonymous(Long id, BoardRequestDto dto){
+        boardValidationService.validatePassword(id, dto.getPassword());
         Board board = boardValidationService.validateBoard(id);
 
         board.updatePost(dto.getTitle(), dto.getContent(), dto.getCategory());
@@ -37,8 +38,8 @@ public class BoardAnonymousService {
         return BoardMapper.toDto(board);
     }
 
-    public void deletePostForAnonymous(String password, Long id){
-        boardValidationService.validatePassword(id, password);
+    public void deletePostForAnonymous(BoardPasswordRequestDto dto, Long id){
+        boardValidationService.validatePassword(id, dto.getPassword());
         boardValidationService.validateBoard(id);
         boardRepository.deleteById(id);
     }

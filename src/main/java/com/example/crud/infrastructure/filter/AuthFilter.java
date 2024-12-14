@@ -31,17 +31,6 @@ public class AuthFilter implements Filter {
             return;
         }
 
-        //비로그인 사용자일 경우 nickname, password 요청(수정 살짝해야됨)
-        if (req.getRequestURI().startsWith("/api/boards") || req.getRequestURI().startsWith("/api/comments")) {
-            String nickname = req.getParameter("nickname");
-            String password = req.getParameter("password");
-
-            if(nickname == null || nickname.isEmpty() || password == null || password.isEmpty()){
-                res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                throw new CustomException(ErrorCode.BAD_GATEWAY);
-            }
-        }
-
         Cookie[] cookies = req.getCookies();
         if(cookies != null){
             for(Cookie cookie : cookies){

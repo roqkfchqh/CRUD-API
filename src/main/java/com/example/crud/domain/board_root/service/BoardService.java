@@ -10,6 +10,7 @@ import com.example.crud.domain.user_root.service.UserValidationService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -45,6 +46,7 @@ public class BoardService {
     }
 
     //read
+    @Value("${cache.view.threshold:100}")
     @Transactional(readOnly = true)
     @Cacheable(value = "posts", key = "#id", unless="#result == null")
     public BoardResponseDto readPost(Long id) {
@@ -74,6 +76,7 @@ public class BoardService {
     }
 
     //like
+    @Value("${cache.view.threshold:30}")
     @CachePut(value = "posts", key = "#id", unless = "#result == null")
     public BoardResponseDto likePost(Long id) {
         Board board = boardValidationService.validateBoard(id);

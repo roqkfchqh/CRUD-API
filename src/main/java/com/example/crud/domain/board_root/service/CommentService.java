@@ -1,6 +1,5 @@
 package com.example.crud.domain.board_root.service;
 
-import com.example.crud.application.dto.comment.CommentCombinedRequestDto;
 import com.example.crud.application.dto.comment.CommentPasswordRequestDto;
 import com.example.crud.application.dto.comment.CommentResponseDto;
 import com.example.crud.application.mapper.CommentMapper;
@@ -29,7 +28,7 @@ public class CommentService {
     private final BoardRepository boardRepository;
 
     //create
-    @CachePut(value = "comments", key = "'post: ' + #boardId", unless = "#result == null")
+    @CachePut(value = "posts", key = "#boardId", unless = "#result == null")
     public CommentResponseDto createComment(Long boardId, CommentCombinedRequestDto commentCombinedRequestDto) {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
@@ -43,7 +42,7 @@ public class CommentService {
     }
 
     //get
-    @Cacheable(value = "comments", key = "'post: ' + #board.getId()", unless="#result == null")
+    @Cacheable(value = "posts", key = "#board.getId()", unless="#result == null")
     public Page<CommentResponseDto> getCommentsBoard(Board board, int page, int size){
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
         Page<Comment> commentsPage = commentRepository.findByBoard(board, pageable);
@@ -52,7 +51,7 @@ public class CommentService {
     }
 
     //update
-    @CachePut(value = "comments", key = "'post: ' + #boardId", unless = "#result == null")
+    @CachePut(value = "posts", key = "#boardId", unless = "#result == null")
     public CommentResponseDto updateComment(Long boardId, Long id, CommentCombinedRequestDto commentCombinedRequestDto) {
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
@@ -68,7 +67,7 @@ public class CommentService {
     }
 
     //delete
-    @CachePut(value = "comments", key = "'post: ' + #boardId", unless = "#result == null")
+    @CachePut(value = "posts", key = "#boardId", unless = "#result == null")
     public void deleteComment(Long boardId, Long id, CommentPasswordRequestDto commentPasswordRequestDto) {
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));

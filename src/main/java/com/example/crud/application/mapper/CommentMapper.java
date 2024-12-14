@@ -1,6 +1,5 @@
 package com.example.crud.application.mapper;
 
-import com.example.crud.application.dto.comment.CommentCombinedRequestDto;
 import com.example.crud.application.dto.comment.CommentResponseDto;
 import com.example.crud.domain.board_root.entities.Comment;
 

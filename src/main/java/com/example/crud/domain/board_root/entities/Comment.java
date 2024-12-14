@@ -51,7 +51,6 @@ public class Comment extends DateTimeEntity {
     @JsonManagedReference
     private List<Comment> childComment;
 
-
     public void updateContent(String content) {
         this.content = content;
     }

@@ -37,12 +37,12 @@ public class BoardMapper {
     }
 
     //dto -> entity
-    public static Board toEntityWithAnonymous(BoardRequestDto dto, String encodedPassword, String nickname){
+    public static Board toEntityWithAnonymous(BoardRequestDto dto, String encodedPassword){
         return Board.builder()
                 .title(dto.getTitle())
                 .content(dto.getContent())
                 .category(dto.getCategory())
-                .nickname(nickname)
+                .nickname(dto.getNickname())
                 .password(encodedPassword)
                 .build();
     }

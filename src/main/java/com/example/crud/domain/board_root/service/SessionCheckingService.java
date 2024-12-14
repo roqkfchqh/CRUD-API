@@ -1,5 +1,6 @@
 package com.example.crud.domain.board_root.service;
 
+import com.example.crud.application.dto.board.BoardPasswordRequestDto;
 import com.example.crud.application.dto.board.BoardRequestDto;
 import com.example.crud.application.dto.board.BoardResponseDto;
 import com.example.crud.application.exception.CustomException;
@@ -16,7 +17,10 @@ public class SessionCheckingService {
     private final BoardService boardService;
     private final BoardAnonymousService boardAnonymousService;
 
-    public BoardResponseDto getCreatePost(HttpServletRequest req, BoardRequestDto dto) {
+    public BoardResponseDto getCreatePost(
+            HttpServletRequest req,
+            BoardRequestDto dto){
+
         User sessionUser = (User) req.getSession().getAttribute("user");
         BoardResponseDto board;
 
@@ -25,19 +29,19 @@ public class SessionCheckingService {
             board = boardService.createPost(req, dto);
         }else{
             //비로그인 사용자
-            String nickname = req.getParameter("nickname");
-            String password = req.getParameter("password");
-
-            if(nickname == null || password == null){
-                throw new CustomException(ErrorCode.BAD_GATEWAY);
+            if(dto.getNickname() == null || dto.getPassword() == null){
+                throw new CustomException(ErrorCode.REQUEST_REQUIRED);
             }
-
-            board = boardAnonymousService.createPostForAnonymous(nickname, password, dto);
+            board = boardAnonymousService.createPostForAnonymous(dto);
         }
         return board;
     }
 
-    public BoardResponseDto getUpdatePost(HttpServletRequest req, Long id, BoardRequestDto dto) {
+    public BoardResponseDto getUpdatePost(
+            HttpServletRequest req,
+            Long id,
+            BoardRequestDto dto){
+
         User sessionUser = (User) req.getSession().getAttribute("user");
         BoardResponseDto board;
 
@@ -46,18 +50,19 @@ public class SessionCheckingService {
             board = boardService.updatePost(req, id, dto);
         }else{
             //비로그인 사용자
-            String password = req.getParameter("password");
-
-            if(password == null){
-                throw new CustomException(ErrorCode.BAD_GATEWAY);
+            if(dto.getPassword() == null){
+                throw new CustomException(ErrorCode.REQUEST_REQUIRED);
             }
-
-            board = boardAnonymousService.updatePostForAnonymous(password, id, dto);
+            board = boardAnonymousService.updatePostForAnonymous(id, dto);
         }
         return board;
     }
 
-    public void getDeletePost(HttpServletRequest req, Long id) {
+    public void getDeletePost(
+            HttpServletRequest req,
+            Long id,
+            BoardPasswordRequestDto dto){
+
         User sessionUser = (User) req.getSession().getAttribute("user");
 
         if(sessionUser != null){
@@ -65,13 +70,10 @@ public class SessionCheckingService {
             boardService.deletePost(req, id);
         }else{
             //비로그인 사용자
-            String password = req.getParameter("password");
-
-            if(password == null){
-                throw new CustomException(ErrorCode.BAD_GATEWAY);
+            if(dto.getPassword() == null){
+                throw new CustomException(ErrorCode.REQUEST_REQUIRED);
             }
-
-            boardAnonymousService.deletePostForAnonymous(password, id);
+            boardAnonymousService.deletePostForAnonymous(dto, id);
         }
     }
 }

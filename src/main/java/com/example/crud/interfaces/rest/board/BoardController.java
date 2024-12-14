@@ -1,10 +1,12 @@
 package com.example.crud.interfaces.rest.board;
 
+import com.example.crud.application.dto.board.BoardPasswordRequestDto;
 import com.example.crud.application.dto.board.BoardRequestDto;
 import com.example.crud.application.dto.board.BoardResponseDto;
 import com.example.crud.domain.board_root.service.BoardService;
 import com.example.crud.domain.board_root.service.SessionCheckingService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +22,7 @@ public class BoardController {
     @PostMapping
     public ResponseEntity<BoardResponseDto> createPost(
             HttpServletRequest req,
-            @RequestBody BoardRequestDto dto){
+            @Valid @RequestBody BoardRequestDto dto){
 
         BoardResponseDto board = sessionCheckingService.getCreatePost(req, dto);
 
@@ -33,11 +35,11 @@ public class BoardController {
         return ResponseEntity.ok(boardService.readPost(id));
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<BoardResponseDto> updatePost(
             HttpServletRequest req,
             @PathVariable Long id,
-            @RequestBody BoardRequestDto dto){
+            @Valid @RequestBody BoardRequestDto dto){
 
         BoardResponseDto board = sessionCheckingService.getUpdatePost(req, id, dto);
 
@@ -52,9 +54,10 @@ public class BoardController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deletePost(
             HttpServletRequest req,
-            @PathVariable Long id){
+            @PathVariable Long id,
+            @Valid @RequestBody(required = false) BoardPasswordRequestDto dto){
 
-        sessionCheckingService.getDeletePost(req, id);
+        sessionCheckingService.getDeletePost(req, id, dto);
 
         return ResponseEntity.ok("해당 게시물이 정상적으로 삭제되었습니다.");
     }

@@ -1,7 +1,7 @@
-package com.example.crud.application.dto.comment;
+package com.example.crud.application.dto.board;
 
+import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class CommentPasswordRequestDto {
+public class BoardPasswordRequestDto {
 
+    @Nullable
     @NotBlank(message = "비밀번호를 입력해주세요.")
-    @Size(min = 3, max = 10, message = "비밀번호는 2자 이상 10자 이하로 입력해주세요.")
     private String password;
 }
