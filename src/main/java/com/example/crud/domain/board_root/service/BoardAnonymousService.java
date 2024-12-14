@@ -21,6 +21,8 @@ public class BoardAnonymousService {
     private final BoardValidationService boardValidationService;
 
     public BoardResponseDto createPostForAnonymous(BoardRequestDto dto){
+        boardValidationService.validateAnonymousUser(dto);
+
         String encodedPassword = passwordEncoder.encode(dto.getPassword());
         Board board = BoardMapper.toEntityWithAnonymous(dto, encodedPassword);
 
@@ -29,6 +31,8 @@ public class BoardAnonymousService {
     }
 
     public BoardResponseDto updatePostForAnonymous(Long id, BoardRequestDto dto){
+        boardValidationService.validateAnonymousUser(dto);
+
         boardValidationService.validatePassword(id, dto.getPassword());
         Board board = boardValidationService.validateBoard(id);
 

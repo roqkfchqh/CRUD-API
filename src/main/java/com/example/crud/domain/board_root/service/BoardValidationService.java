@@ -1,5 +1,6 @@
 package com.example.crud.domain.board_root.service;
 
+import com.example.crud.application.dto.board.BoardRequestDto;
 import com.example.crud.application.exception.CustomException;
 import com.example.crud.application.exception.errorcode.ErrorCode;
 import com.example.crud.domain.board_root.aggregate.Board;
@@ -36,6 +37,24 @@ public class BoardValidationService {
         String boardPassword = boardRepository.findPasswordById(id);
         if(!passwordEncoder.matches(password, boardPassword)){
             throw new CustomException(ErrorCode.WRONG_PASSWORD);
+        }
+    }
+
+    public void validateAnonymousUser(BoardRequestDto dto) {
+        if (dto.getNickname() == null || dto.getNickname().isBlank()) {
+            throw new CustomException(ErrorCode.NICKNAME_REQUIRED);
+        }
+
+        if (dto.getPassword() == null || dto.getPassword().isBlank()) {
+            throw new CustomException(ErrorCode.PASSWORD_REQUIRED);
+        }
+
+        if (dto.getNickname().length() < 3 || dto.getNickname().length() > 10) {
+            throw new CustomException(ErrorCode.NICKNAME_REQUIRED);
+        }
+
+        if (dto.getPassword().length() < 3 || dto.getPassword().length() > 10) {
+            throw new CustomException(ErrorCode.PASSWORD_REQUIRED);
         }
     }
 }
