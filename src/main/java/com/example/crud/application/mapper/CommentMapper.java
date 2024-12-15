@@ -17,7 +17,7 @@ public class CommentMapper {
                 .id(comment.getId())
                 .nickname(comment.getNickname())
                 .content(comment.getContent())
-                .createdDate(comment.getCreatedAt())
+                .createdAt(comment.getCreatedAt())
                 .bigCommentId(comment.getParentsComment() != null ? comment.getParentsComment().getId() : null)
                 .smallComment(comment.getChildComment() != null
                         ? comment.getChildComment().stream()

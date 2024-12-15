@@ -18,13 +18,13 @@ public class CommentResponseDto {
     private List<CommentResponseDto> smallComment;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
-    private LocalDateTime createdDate;
+    private LocalDateTime createdAt;
 
     private CommentResponseDto(Comment comment, List<CommentResponseDto> smallCommentDto){
         this.id = comment.getId();
         this.nickname = comment.getNickname();
         this.content = comment.getContent();
-        this.createdDate = comment.getCreatedAt();
+        this.createdAt = comment.getCreatedAt();
         this.bigCommentId = comment.getParentsComment() != null ? comment.getParentsComment().getId() : null;
         this.smallComment = smallCommentDto;
     }

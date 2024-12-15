@@ -1,6 +1,7 @@
 package com.example.crud.interfaces.rest.board;
 
 import com.example.crud.application.dto.board.BoardPasswordRequestDto;
+import com.example.crud.application.dto.board.BoardReadResponseDto;
 import com.example.crud.application.dto.board.BoardRequestDto;
 import com.example.crud.application.dto.board.BoardResponseDto;
 import com.example.crud.domain.board_root.service.BoardService;
@@ -30,7 +31,7 @@ public class BoardController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BoardResponseDto> readPost(
+    public ResponseEntity<BoardReadResponseDto> readPost(
             @PathVariable Long id){
         return ResponseEntity.ok(boardService.readPost(id));
     }

@@ -1,6 +1,6 @@
 package com.example.crud.interfaces.rest.board;
 
-import com.example.crud.application.dto.board.BoardResponseDto;
+import com.example.crud.application.dto.board.BoardPagingResponseDto;
 import com.example.crud.domain.board_root.service.BoardPagingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -17,14 +17,14 @@ public class BoardPagingController {
     private final BoardPagingService boardPagingService;
 
     @GetMapping("/pages")
-    public ResponseEntity<Page<BoardResponseDto>> getPagedBoard(
+    public ResponseEntity<Page<BoardPagingResponseDto>> getPagedBoard(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size){
         return ResponseEntity.ok(boardPagingService.pagingBoard(page, size));
     }
 
     @GetMapping("/category/{keyword}")
-    public ResponseEntity<Page<BoardResponseDto>> getCategoryBoard(
+    public ResponseEntity<Page<BoardPagingResponseDto>> getCategoryBoard(
             @PathVariable String keyword,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size){
@@ -32,7 +32,7 @@ public class BoardPagingController {
     }
 
     @GetMapping("/search/{keyword}")
-    public ResponseEntity<Page<BoardResponseDto>> getSearchBoard(
+    public ResponseEntity<Page<BoardPagingResponseDto>> getSearchBoard(
             @PathVariable String keyword,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size){

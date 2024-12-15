@@ -1,5 +1,6 @@
 package com.example.crud.domain.board_root.service;
 
+import com.example.crud.application.dto.board.BoardReadResponseDto;
 import com.example.crud.application.dto.board.BoardRequestDto;
 import com.example.crud.application.dto.board.BoardResponseDto;
 import com.example.crud.application.dto.comment.CommentPasswordRequestDto;
@@ -11,12 +12,14 @@ import com.example.crud.domain.board_root.aggregate.Board;
 import com.example.crud.domain.board_root.entities.Comment;
 import com.example.crud.domain.board_root.repository.BoardRepository;
 import com.example.crud.domain.board_root.repository.CommentRepository;
+import com.example.crud.domain.board_root.valueobjects.CommentSort;
 import com.example.crud.domain.user_root.aggregate.User;
 import com.example.crud.domain.user_root.service.UserValidationService;
 import com.example.crud.infrastructure.cache.CustomCacheable;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +33,10 @@ public class BoardService extends AbstractBoardService{
     private final UserValidationService userValidationService;
     private final BoardValidationService boardValidationService;
     private final BoardAsyncService boardAsyncService;
+    private final BoardPagingService boardPagingService;
+
+    private static final int PAGE_COUNT = 0;
+    private static final int PAGE_SIZE = 10;
 
     @Override
     protected void validateUser(Object userInfo){
@@ -78,14 +85,15 @@ public class BoardService extends AbstractBoardService{
     @Value("${cache.view.threshold:100}")
     @Transactional(readOnly = true)
     @CustomCacheable(key = "'post::' + #id", ttl = 600)
-    public BoardResponseDto readPost(Long id) {
+    public BoardReadResponseDto readPost(Long id){
         Board board = boardValidationService.validateBoard(id);
 
         board.updateCount(board.getCount() + 1);
         boardRepository.save(board);
 
         boardAsyncService.updateViewCountAsync(board);
-        return BoardMapper.toDto(board);
+        Page<CommentResponseDto> comments = boardPagingService.pagingComments(CommentSort.ASC, id, PAGE_COUNT, PAGE_SIZE);
+        return BoardMapper.toReadDto(board, comments);
     }
 
     //likePost

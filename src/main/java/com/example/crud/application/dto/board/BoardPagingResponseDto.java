@@ -11,19 +11,16 @@ import java.time.LocalDateTime;
 @Builder
 @Getter
 @AllArgsConstructor
-public class BoardResponseDto {
+public class BoardPagingResponseDto {
 
     private Long id;
     private String title;
-    private String content;
     private String nickname;
     private Category category;
+    private Long commentsNum;
     private int liked;
     private int count;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
-
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
-    private LocalDateTime updatedAt;
 }
