@@ -11,7 +11,7 @@ import com.example.crud.application.mapper.CommentMapper;
 import com.example.crud.domain.board_root.aggregate.Board;
 import com.example.crud.domain.board_root.entities.Comment;
 import com.example.crud.domain.board_root.repository.BoardRepository;
-import com.example.crud.infrastructure.cache.CacheEventType;
+import com.example.crud.infrastructure.cache.CustomCacheable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,7 +25,6 @@ public class BoardAnonymousService extends AbstractBoardService{
     private final BoardRepository boardRepository;
     private final PasswordEncoder passwordEncoder;
     private final BoardValidationService boardValidationService;
-    private final CacheService cacheService;
 
     @Override
     protected void validateUser(Object userInfo){
@@ -57,16 +56,15 @@ public class BoardAnonymousService extends AbstractBoardService{
 
         board.updatePost(dto.getTitle(), dto.getContent(), dto.getCategory());
         boardRepository.save(board);
-        cacheService.put(board.getId(), CacheEventType.POST_PUT);
         return BoardMapper.toDto(board);
     }
 
     @Override
     protected void executeDeletePost(Object userInfo, Long id){
         boardRepository.deleteById(id);
-        cacheService.evict(id, CacheEventType.POST_EVICT);
     }
 
+    @CustomCacheable(key = "'post::' + #id", ttl = 600)
     public CommentResponseDto createCommentForAnonymous(CommentRequestDto dto){
         boardValidationService.validateAnonymousUser(dto.getNickname(), dto.getPassword());
         Board board = boardValidationService.validateBoard(dto.getBoardId());
@@ -75,11 +73,10 @@ public class BoardAnonymousService extends AbstractBoardService{
 
         board.addComment(comment);
         boardRepository.save(board);
-
-        cacheService.put(board.getId(), CacheEventType.POST_PUT);
         return CommentMapper.toDto(comment);
     }
 
+    @CustomCacheable(key = "'post::' + #id", ttl = 600)
     public void deleteCommentForAnonymous(Long commentId, CommentPasswordRequestDto dto){
         boardValidationService.validateCommentPassword(commentId, dto.getPassword());
 
@@ -89,7 +86,5 @@ public class BoardAnonymousService extends AbstractBoardService{
         board.removeComment(comment);
         boardRepository.deleteById(commentId);
         boardRepository.save(board);
-
-        cacheService.put(board.getId(), CacheEventType.POST_PUT);
     }
 }

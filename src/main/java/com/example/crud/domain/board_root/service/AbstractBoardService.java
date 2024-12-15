@@ -2,6 +2,8 @@ package com.example.crud.domain.board_root.service;
 
 import com.example.crud.application.dto.board.BoardRequestDto;
 import com.example.crud.application.dto.board.BoardResponseDto;
+import com.example.crud.infrastructure.cache.CustomCacheEvict;
+import com.example.crud.infrastructure.cache.CustomCacheable;
 
 public abstract class AbstractBoardService {
 
@@ -10,15 +12,19 @@ public abstract class AbstractBoardService {
         return executeCreatePost(dto, userInfo);
     }
 
+    @CustomCacheable(key = "'post::' + #id", ttl = 600)
     public final BoardResponseDto updatePost(BoardRequestDto dto, Object userInfo, Long id){
         validateUser(userInfo);
         return executeUpdatePost(dto, userInfo, id);
     }
 
+    @CustomCacheEvict(key = "'post::' + #id")
     public final void deletePost(Object userInfo, Long id){
         validateUserForDelete(userInfo, id);
         executeDeletePost(userInfo, id);
     }
+
+
 
     protected abstract void validateUser(Object userInfo);
 

@@ -13,9 +13,6 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @Configuration
 @EnableCaching
 @RequiredArgsConstructor
@@ -38,15 +35,8 @@ public class CacheConfig {
                 // 캐시에 저장할 값을 어떻게 직렬화 / 역직렬화 할것인지
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer(objectMapper))); // Value 직렬화
 
-        Map<String, RedisCacheConfiguration> cacheConfigurations = new HashMap<>();
-        cacheConfigurations.put("post", defaultConfig);
-        cacheConfigurations.put("page", defaultConfig);
-        cacheConfigurations.put("category", defaultConfig);
-        cacheConfigurations.put("search", defaultConfig);
-
         return RedisCacheManager.builder(redisConnectionFactory)
                 .cacheDefaults(defaultConfig)
-                .withInitialCacheConfigurations(cacheConfigurations)
                 .build();
     }
 

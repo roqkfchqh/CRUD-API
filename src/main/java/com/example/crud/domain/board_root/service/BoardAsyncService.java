@@ -26,14 +26,14 @@ public class BoardAsyncService {
     }
 
     public void cacheWithDynamicTTL(Board board) {
-        String cacheKey = "posts: " + board.getId();
+        String cacheKey = "post::" + board.getId();
 
         long viewThreshold = 100;   //조회수 임계값
         long likeThreshold = 30;    //좋아요 임계값
-        Duration ttl = Duration.ofSeconds(20);  //기본 ttl
+        Duration ttl = Duration.ofSeconds(600);  //기본 ttl
 
         if(board.getCount() > viewThreshold || board.getLiked() > likeThreshold){
-            ttl = Duration.ofSeconds(180);  //hot data 는 ttl 3분으로 연장
+            ttl = Duration.ofSeconds(1200);  //hot data 는 ttl 3분으로 연장
         }
         redisTemplate.opsForValue().set(cacheKey, board, ttl);    //캐시에 저장, ttl 설정
     }

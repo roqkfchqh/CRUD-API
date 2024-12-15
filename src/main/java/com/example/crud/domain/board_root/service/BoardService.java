@@ -13,7 +13,7 @@ import com.example.crud.domain.board_root.repository.BoardRepository;
 import com.example.crud.domain.board_root.repository.CommentRepository;
 import com.example.crud.domain.user_root.aggregate.User;
 import com.example.crud.domain.user_root.service.UserValidationService;
-import com.example.crud.infrastructure.cache.CacheEventType;
+import com.example.crud.infrastructure.cache.CustomCacheable;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,7 +30,6 @@ public class BoardService extends AbstractBoardService{
     private final UserValidationService userValidationService;
     private final BoardValidationService boardValidationService;
     private final BoardAsyncService boardAsyncService;
-    private final CacheService cacheService;
 
     @Override
     protected void validateUser(Object userInfo){
@@ -53,7 +52,6 @@ public class BoardService extends AbstractBoardService{
         Board board = BoardMapper.toEntity(dto, user);
 
         boardRepository.save(board);
-        cacheService.put(board.getId(), CacheEventType.POST_PUT);
         return BoardMapper.toDto(board);
     }
 
@@ -67,7 +65,6 @@ public class BoardService extends AbstractBoardService{
         board.updatePost(dto.getContent(), dto.getTitle(), dto.getCategory());
 
         boardRepository.save(board);
-        cacheService.put(board.getId(), CacheEventType.POST_PUT);
         return BoardMapper.toDto(board);
     }
 
@@ -75,12 +72,12 @@ public class BoardService extends AbstractBoardService{
     @Override
     protected void executeDeletePost(Object userInfo, Long id){
         boardRepository.deleteById(id);
-        cacheService.evict(id, CacheEventType.POST_EVICT);
     }
 
     //readPost
     @Value("${cache.view.threshold:100}")
     @Transactional(readOnly = true)
+    @CustomCacheable(key = "'post::' + #id", ttl = 600)
     public BoardResponseDto readPost(Long id) {
         Board board = boardValidationService.validateBoard(id);
 
@@ -88,22 +85,22 @@ public class BoardService extends AbstractBoardService{
         boardRepository.save(board);
 
         boardAsyncService.updateViewCountAsync(board);
-        cacheService.put(board.getId(), CacheEventType.POST_PUT);
         return BoardMapper.toDto(board);
     }
 
     //likePost
     @Value("${cache.view.threshold:30}")
+    @CustomCacheable(key = "'post::' + #id", ttl = 600)
     public BoardResponseDto likePost(Long id) {
         Board board = boardValidationService.validateBoard(id);
 
         board.updateLiked(board.getLiked() + 1);
         boardRepository.save(board);
-        cacheService.put(board.getId(), CacheEventType.POST_PUT);
         return BoardMapper.toDto(board);
     }
 
     //createComment
+    @CustomCacheable(key = "'post::' + #id", ttl = 600)
     public CommentResponseDto createComment(HttpServletRequest req, CommentRequestDto dto) {
         Board board = boardValidationService.validateBoard(dto.getBoardId());
         User user = userValidationService.validateUser(req);
@@ -113,11 +110,11 @@ public class BoardService extends AbstractBoardService{
         board.addComment(comment);
         boardRepository.save(board);
 
-        cacheService.put(board.getId(), CacheEventType.POST_PUT);
         return CommentMapper.toDto(comment);
     }
 
     //deleteComment
+    @CustomCacheable(key = "'post::' + #id", ttl = 600)
     public void deleteComment(HttpServletRequest req, CommentPasswordRequestDto dto, Long commentId) {
         userValidationService.validateUser(req);
         Board board = boardValidationService.validateBoard(dto.getBoardId());
@@ -126,6 +123,5 @@ public class BoardService extends AbstractBoardService{
         board.removeComment(comment);
         commentRepository.deleteById(commentId);
         boardRepository.save(board);
-        cacheService.put(board.getId(), CacheEventType.POST_PUT);
     }
 }
