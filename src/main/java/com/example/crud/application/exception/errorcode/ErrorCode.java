@@ -28,6 +28,9 @@ public enum ErrorCode {
     CONTENT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 게시글이 존재하지 않습니다."),
     NOT_FOUND(HttpStatus.NOT_FOUND, "없는 페이지입니다."),
 
+    //406
+    EVENT_NOT_ACCEPTABLE(HttpStatus.NOT_ACCEPTABLE, "이벤트 타입이 잘못되었습니다."),
+
     //429
     TOO_MANY_REQUESTS(HttpStatus.TOO_MANY_REQUESTS, "30초에 한번만 글을 쓸 수 있습니다."),
 

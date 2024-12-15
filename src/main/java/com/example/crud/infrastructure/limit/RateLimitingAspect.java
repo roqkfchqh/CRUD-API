@@ -1,9 +1,8 @@
-package com.example.crud.infrastructure.aspects;
+package com.example.crud.infrastructure.limit;
 
 import com.example.crud.application.exception.CustomException;
 import com.example.crud.application.exception.errorcode.ErrorCode;
 import com.example.crud.domain.user_root.aggregate.User;
-import com.example.crud.infrastructure.persistence.RedisRateLimiter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;

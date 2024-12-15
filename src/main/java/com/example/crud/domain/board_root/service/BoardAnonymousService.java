@@ -11,8 +11,8 @@ import com.example.crud.application.mapper.CommentMapper;
 import com.example.crud.domain.board_root.aggregate.Board;
 import com.example.crud.domain.board_root.entities.Comment;
 import com.example.crud.domain.board_root.repository.BoardRepository;
+import com.example.crud.infrastructure.cache.CacheEventType;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +25,7 @@ public class BoardAnonymousService extends AbstractBoardService{
     private final BoardRepository boardRepository;
     private final PasswordEncoder passwordEncoder;
     private final BoardValidationService boardValidationService;
+    private final CacheService cacheService;
 
     @Override
     protected void validateUser(Object userInfo){
@@ -56,47 +57,16 @@ public class BoardAnonymousService extends AbstractBoardService{
 
         board.updatePost(dto.getTitle(), dto.getContent(), dto.getCategory());
         boardRepository.save(board);
+        cacheService.put(board.getId(), CacheEventType.POST_PUT);
         return BoardMapper.toDto(board);
     }
 
     @Override
     protected void executeDeletePost(Object userInfo, Long id){
         boardRepository.deleteById(id);
+        cacheService.evict(id, CacheEventType.POST_EVICT);
     }
 
-
-//    @CacheEvict(value = "boards", allEntries = true)
-//    public BoardResponseDto createPostForAnonymous(BoardRequestDto dto){
-//        boardValidationService.validateAnonymousUser(dto.getNickname(), dto.getPassword());
-//
-//        String encodedPassword = passwordEncoder.encode(dto.getPassword());
-//        Board board = BoardMapper.toEntityWithAnonymous(dto, encodedPassword);
-//
-//        boardRepository.save(board);
-//        return BoardMapper.toDto(board);
-//    }
-//
-//    @CachePut(value = "posts", key = "#boardId", unless = "#result == null")
-//    public BoardResponseDto updatePostForAnonymous(Long id, BoardRequestDto dto){
-//        boardValidationService.validateAnonymousUser(dto.getNickname(), dto.getPassword());
-//
-//        boardValidationService.validateBoardPassword(id, dto.getPassword());
-//        Board board = boardValidationService.validateBoard(id);
-//
-//        board.updatePost(dto.getTitle(), dto.getContent(), dto.getCategory());
-//        boardRepository.save(board);
-//
-//        return BoardMapper.toDto(board);
-//    }
-//
-//    @CachePut(value = "posts", key = "#boardId", unless = "#result == null")
-//    public void deletePostForAnonymous(BoardPasswordRequestDto dto, Long id){
-//        boardValidationService.validateBoardPassword(id, dto.getPassword());
-//        boardValidationService.validateBoard(id);
-//        boardRepository.deleteById(id);
-//    }
-
-    @CachePut(value = "posts", key = "#boardId", unless = "#result == null")
     public CommentResponseDto createCommentForAnonymous(CommentRequestDto dto){
         boardValidationService.validateAnonymousUser(dto.getNickname(), dto.getPassword());
         Board board = boardValidationService.validateBoard(dto.getBoardId());
@@ -106,10 +76,10 @@ public class BoardAnonymousService extends AbstractBoardService{
         board.addComment(comment);
         boardRepository.save(board);
 
+        cacheService.put(board.getId(), CacheEventType.POST_PUT);
         return CommentMapper.toDto(comment);
     }
 
-    @CachePut(value = "posts", key = "#boardId", unless = "#result == null")
     public void deleteCommentForAnonymous(Long commentId, CommentPasswordRequestDto dto){
         boardValidationService.validateCommentPassword(commentId, dto.getPassword());
 
@@ -119,5 +89,7 @@ public class BoardAnonymousService extends AbstractBoardService{
         board.removeComment(comment);
         boardRepository.deleteById(commentId);
         boardRepository.save(board);
+
+        cacheService.put(board.getId(), CacheEventType.POST_PUT);
     }
 }

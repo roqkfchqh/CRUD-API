@@ -13,11 +13,10 @@ import com.example.crud.domain.board_root.repository.BoardRepository;
 import com.example.crud.domain.board_root.repository.CommentRepository;
 import com.example.crud.domain.user_root.aggregate.User;
 import com.example.crud.domain.user_root.service.UserValidationService;
+import com.example.crud.infrastructure.cache.CacheEventType;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +30,7 @@ public class BoardService extends AbstractBoardService{
     private final UserValidationService userValidationService;
     private final BoardValidationService boardValidationService;
     private final BoardAsyncService boardAsyncService;
+    private final CacheService cacheService;
 
     @Override
     protected void validateUser(Object userInfo){
@@ -41,11 +41,11 @@ public class BoardService extends AbstractBoardService{
     @Override
     protected void validateUserForDelete(Object userInfo, Long id){
         boardValidationService.validateBoard(id);
-
         HttpServletRequest req = (HttpServletRequest) userInfo;
         userValidationService.validateUser(req);
     }
 
+    //createPost
     @Override
     protected BoardResponseDto executeCreatePost(BoardRequestDto dto, Object userInfo){
         HttpServletRequest req = (HttpServletRequest) userInfo;
@@ -53,9 +53,11 @@ public class BoardService extends AbstractBoardService{
         Board board = BoardMapper.toEntity(dto, user);
 
         boardRepository.save(board);
+        cacheService.put(board.getId(), CacheEventType.POST_PUT);
         return BoardMapper.toDto(board);
     }
 
+    //updatePost
     @Override
     protected BoardResponseDto executeUpdatePost(BoardRequestDto dto, Object userInfo, Long id){
         HttpServletRequest req = (HttpServletRequest) userInfo;
@@ -65,29 +67,20 @@ public class BoardService extends AbstractBoardService{
         board.updatePost(dto.getContent(), dto.getTitle(), dto.getCategory());
 
         boardRepository.save(board);
+        cacheService.put(board.getId(), CacheEventType.POST_PUT);
         return BoardMapper.toDto(board);
     }
 
+    //deletePost
     @Override
     protected void executeDeletePost(Object userInfo, Long id){
         boardRepository.deleteById(id);
+        cacheService.evict(id, CacheEventType.POST_EVICT);
     }
 
-//    //create
-//    @CacheEvict(value = "boards", allEntries = true)
-//    public BoardResponseDto createPost(HttpServletRequest req, BoardRequestDto dto) {
-//        User user = userValidationService.validateUser(req);
-//        Board board = BoardMapper.toEntity(dto, user);
-//
-//        boardRepository.save(board);
-//
-//        return BoardMapper.toDto(board);
-//    }
-
-    //read
+    //readPost
     @Value("${cache.view.threshold:100}")
     @Transactional(readOnly = true)
-    @Cacheable(value = "posts", key = "#id", unless="#result == null")
     public BoardResponseDto readPost(Long id) {
         Board board = boardValidationService.validateBoard(id);
 
@@ -95,47 +88,22 @@ public class BoardService extends AbstractBoardService{
         boardRepository.save(board);
 
         boardAsyncService.updateViewCountAsync(board);
+        cacheService.put(board.getId(), CacheEventType.POST_PUT);
         return BoardMapper.toDto(board);
     }
 
-//    //update
-//    @CachePut(value = "posts", key = "#id", unless = "#result == null")
-//    public BoardResponseDto updatePost(HttpServletRequest req, Long id, BoardRequestDto dto) {
-//        userValidationService.validateUser(req);
-//        Board board = boardValidationService.validateBoard(id);
-//
-//        board.updatePost(
-//                dto.getContent(),
-//                dto.getTitle(),
-//                dto.getCategory()
-//        );
-//
-//        boardRepository.save(board);
-//        return BoardMapper.toDto(board);
-//    }
-
-    //like
+    //likePost
     @Value("${cache.view.threshold:30}")
-    @CachePut(value = "posts", key = "#id", unless = "#result == null")
     public BoardResponseDto likePost(Long id) {
         Board board = boardValidationService.validateBoard(id);
 
         board.updateLiked(board.getLiked() + 1);
         boardRepository.save(board);
+        cacheService.put(board.getId(), CacheEventType.POST_PUT);
         return BoardMapper.toDto(board);
     }
 
-//    //delete
-//    @CachePut(value = "posts", key = "#id", unless = "#result == null")
-//    @CacheEvict(value = "boards", allEntries = true)
-//    public void deletePost(HttpServletRequest req, Long id){
-//        boardValidationService.validateBoard(id);
-//        userValidationService.validateUser(req);
-//        boardRepository.deleteById(id);
-//    }
-
-    //create
-    @CachePut(value = "posts", key = "#boardId", unless = "#result == null")
+    //createComment
     public CommentResponseDto createComment(HttpServletRequest req, CommentRequestDto dto) {
         Board board = boardValidationService.validateBoard(dto.getBoardId());
         User user = userValidationService.validateUser(req);
@@ -145,11 +113,11 @@ public class BoardService extends AbstractBoardService{
         board.addComment(comment);
         boardRepository.save(board);
 
+        cacheService.put(board.getId(), CacheEventType.POST_PUT);
         return CommentMapper.toDto(comment);
     }
 
-    //delete
-    @CachePut(value = "posts", key = "#boardId", unless = "#result == null")
+    //deleteComment
     public void deleteComment(HttpServletRequest req, CommentPasswordRequestDto dto, Long commentId) {
         userValidationService.validateUser(req);
         Board board = boardValidationService.validateBoard(dto.getBoardId());
@@ -158,5 +126,6 @@ public class BoardService extends AbstractBoardService{
         board.removeComment(comment);
         commentRepository.deleteById(commentId);
         boardRepository.save(board);
+        cacheService.put(board.getId(), CacheEventType.POST_PUT);
     }
 }

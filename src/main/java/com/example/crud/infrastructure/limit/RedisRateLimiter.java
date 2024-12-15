@@ -1,4 +1,4 @@
-package com.example.crud.infrastructure.persistence;
+package com.example.crud.infrastructure.limit;
 
 import com.example.crud.application.exception.CustomException;
 import com.example.crud.application.exception.errorcode.ErrorCode;
@@ -12,10 +12,15 @@ import java.util.concurrent.TimeUnit;
 @AllArgsConstructor
 public class RedisRateLimiter {
 
+    private static final int USER_CREATE = 10;
+    private static final int ANONYMOUS_UPDATE = 2;
+    private static final int USER_LIKE = 2;
+    private static final int ANONYMOUS_LIKE = 1;
+
     private final RedisTemplate<String, Object> redisTemplate;
 
     public void isAllowed(String key) {
-        int limit = key.startsWith("rate_limit:user:") ? 10 : 2;
+        int limit = key.startsWith("rate_limit:user:") ? USER_CREATE : ANONYMOUS_UPDATE;
         Long count = redisTemplate.opsForValue().increment(key);
 
         if(count == 1){
@@ -30,7 +35,7 @@ public class RedisRateLimiter {
     public void isAllowedLikeAndRead(String key, Long boardId){
         String redisKey = key + ":post:" + boardId;
 
-        int limit = key.startsWith("rate_limit:user:") ? 2 : 1;
+        int limit = key.startsWith("rate_limit:user:") ? USER_LIKE : ANONYMOUS_LIKE;
         Long count = redisTemplate.opsForValue().increment(redisKey);
 
         if(count == 1){

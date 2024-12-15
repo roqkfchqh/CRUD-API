@@ -29,6 +29,4 @@ public abstract class AbstractBoardService {
     protected abstract BoardResponseDto executeUpdatePost(BoardRequestDto dto, Object userInfo, Long id);
 
     protected abstract void executeDeletePost(Object userInfo, Long id);
-
-
 }
