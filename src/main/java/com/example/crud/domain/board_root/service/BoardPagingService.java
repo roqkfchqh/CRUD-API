@@ -1,12 +1,13 @@
 package com.example.crud.domain.board_root.service;
 
 import com.example.crud.application.dto.board.BoardPagingResponseDto;
-import com.example.crud.application.dto.board.BoardResponseDto;
 import com.example.crud.application.dto.comment.CommentResponseDto;
 import com.example.crud.application.exception.CustomException;
 import com.example.crud.application.exception.errorcode.ErrorCode;
 import com.example.crud.application.mapper.BoardMapper;
+import com.example.crud.application.mapper.CommentMapper;
 import com.example.crud.domain.board_root.aggregate.Board;
+import com.example.crud.domain.board_root.entities.Comment;
 import com.example.crud.domain.board_root.repository.BoardRepository;
 import com.example.crud.domain.board_root.repository.CommentRepository;
 import com.example.crud.domain.board_root.valueobjects.CommentSort;
@@ -75,10 +76,10 @@ public class BoardPagingService {
 
         Board board = boardValidationService.validateBoard(boardId);
 
-        Page<CommentResponseDto> comments = commentRepository.findCommentsByBoard(board, pageable);
+        Page<Comment> comments = commentRepository.findCommentsByBoard(board, pageable);
         if(comments.isEmpty()){
             return null;
         }
-        return comments;
+        return comments.map(CommentMapper::toDto);
     }
 }

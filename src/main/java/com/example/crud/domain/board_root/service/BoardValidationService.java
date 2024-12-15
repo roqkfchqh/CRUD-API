@@ -50,7 +50,7 @@ public class BoardValidationService {
     }
 
     public void validateCommentPassword(Long id, String password){
-        String commentPassword = commentRepository.findPasswordById(id);
+        String commentPassword = String.valueOf(commentRepository.findById(id));
         if(!passwordEncoder.matches(password, commentPassword)){
             throw new CustomException(ErrorCode.WRONG_PASSWORD);
         }
