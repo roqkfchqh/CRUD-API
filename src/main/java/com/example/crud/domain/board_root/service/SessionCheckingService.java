@@ -26,9 +26,9 @@ public class SessionCheckingService {
         BoardResponseDto board;
 
         if(sessionUser == null){
-            board = boardAnonymousService.createPostForAnonymous(dto);
+            board = boardAnonymousService.createPost(dto, dto);
         }else{
-            board = boardService.createPost(req, dto);
+            board = boardService.createPost(dto, sessionUser);
         }
         return board;
     }
@@ -42,9 +42,9 @@ public class SessionCheckingService {
         BoardResponseDto board;
 
         if(sessionUser == null){
-            board = boardAnonymousService.updatePostForAnonymous(id, dto);
+            board = boardAnonymousService.updatePost(dto, dto, id);
         }else{
-            board = boardService.updatePost(req, id, dto);
+            board = boardService.updatePost(dto, req, id);
         }
         return board;
     }
@@ -57,7 +57,7 @@ public class SessionCheckingService {
         User sessionUser = (User) req.getSession().getAttribute("user");
 
         if(sessionUser == null){
-            boardAnonymousService.deletePostForAnonymous(dto, id);
+            boardAnonymousService.deletePost(dto, id);
         }else{
             boardService.deletePost(req, id);
         }
