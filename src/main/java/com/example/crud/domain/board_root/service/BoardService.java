@@ -108,8 +108,8 @@ public class BoardService extends AbstractBoardService{
         Comment comment = CommentMapper.toEntity(dto, user, board);
 
         board.addComment(comment);
+        commentRepository.save(comment);
         boardRepository.save(board);
-
         return CommentMapper.toDto(comment);
     }
 

@@ -1,7 +1,5 @@
 package com.example.crud.infrastructure.filter;
 
-import com.example.crud.application.exception.CustomException;
-import com.example.crud.application.exception.errorcode.ErrorCode;
 import com.example.crud.domain.user_root.service.UserService;
 import com.example.crud.domain.user_root.aggregate.User;
 import jakarta.servlet.*;

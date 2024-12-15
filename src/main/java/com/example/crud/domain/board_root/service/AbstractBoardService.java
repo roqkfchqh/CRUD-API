@@ -24,8 +24,6 @@ public abstract class AbstractBoardService {
         executeDeletePost(userInfo, id);
     }
 
-
-
     protected abstract void validateUser(Object userInfo);
 
     protected abstract void validateUserForDelete(Object userInfo, Long id);
