@@ -45,7 +45,7 @@ public class UserService {
     public void deleteUser(HttpServletRequest req, CurrentPasswordRequestDto currentPasswordRequestDto){
         User user = userValidationService.validateUser(req);
         userValidationService.validatePassword(user.getPassword(), currentPasswordRequestDto.getCurrentPassword());
-        boardRepository.deleteByUserId(user.getId());
+        //boardRepository.deleteByUserId(user.getId());
         userRepository.deleteById(user.getId());
     }
 
