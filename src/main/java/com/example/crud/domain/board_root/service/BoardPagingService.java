@@ -23,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class BoardPagingService {
 
-    private static final int BOARD_TTL = 240;
+    private static final int BOARD_TTL = 300;
 
     private final BoardRepository boardRepository;
     private final CommentRepository commentRepository;
@@ -31,7 +31,7 @@ public class BoardPagingService {
 
     //paging
     @Transactional(readOnly = true)
-    @CustomCacheable(key = "'boardP::' + #page + #size")
+    @CustomCacheable(key = "'boardP::' + #page + #size", ttl = BOARD_TTL)
     public Page<BoardPagingResponseDto> pagingBoard(int page, int size){
         Pageable pageable = boardValidationService.validatePageSize(page, size);
 

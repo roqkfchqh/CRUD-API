@@ -9,5 +9,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface CustomCacheable {
     String key();
-    long ttl() default 300;
+    long ttl() default 600;
+    long hotTtl() default 1200;
 }

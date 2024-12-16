@@ -26,8 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class BoardService extends AbstractBoardService{
 
-    private static final int POST_TTL = 600;
-
     private final BoardRepository boardRepository;
     private final CommentRepository commentRepository;
     private final UserValidationService userValidationService;
@@ -79,9 +77,8 @@ public class BoardService extends AbstractBoardService{
     }
 
     //readPost
-    //@Value("${cache.view.threshold:100}")
     @Transactional(readOnly = true)
-    @CustomCacheable(key = "'post::' + #id", ttl = POST_TTL)
+    @CustomCacheable(key = "'post::' + #id")
     public BoardReadResponseDto readPost(Long id, int page, int size){
         Board board = boardValidationService.validateBoard(id);
 
@@ -94,8 +91,7 @@ public class BoardService extends AbstractBoardService{
     }
 
     //likePost
-    //@Value("${cache.view.threshold:30}")
-    @CustomCacheable(key = "'post::' + #id", ttl = POST_TTL)
+    @CustomCacheable(key = "'post::' + #id")
     public BoardResponseDto likePost(Long id) {
         Board board = boardValidationService.validateBoard(id);
 
@@ -105,7 +101,7 @@ public class BoardService extends AbstractBoardService{
     }
 
     //createComment
-    @CustomCacheable(key = "'post::' + #id", ttl = POST_TTL)
+    @CustomCacheable(key = "'post::' + #id")
     public CommentResponseDto createComment(HttpServletRequest req, CommentRequestDto dto) {
         Board board = boardValidationService.validateBoard(dto.getBoardId());
         User user = userValidationService.validateUser(req);
@@ -119,7 +115,7 @@ public class BoardService extends AbstractBoardService{
     }
 
     //deleteComment
-    @CustomCacheable(key = "'post::' + #id", ttl = POST_TTL)
+    @CustomCacheable(key = "'post::' + #id")
     public void deleteComment(HttpServletRequest req, CommentPasswordRequestDto dto, Long commentId) {
         userValidationService.validateUser(req);
         Board board = boardValidationService.validateBoard(dto.getBoardId());

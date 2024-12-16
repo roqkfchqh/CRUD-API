@@ -1,5 +1,6 @@
 package com.example.crud.infrastructure.cache;
 
+import com.example.crud.domain.board_root.aggregate.Board;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -35,6 +36,14 @@ public class CacheAspect {
 
         //캐시 없으면 메서드 실행
         Object result = joinPoint.proceed();
+
+        //핫데이터 동적 ttl 적용
+        if (result instanceof Board board) {
+            if (board.getCount() > 100 || board.getLiked() > 30) {
+                ttl = customCacheable.hotTtl();
+            }
+        }
+
         redisTemplate.opsForValue().set(cacheKey, result, Duration.ofSeconds(ttl));
         return result;
     }

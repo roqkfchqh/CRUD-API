@@ -1,6 +1,5 @@
-package com.example.crud.infrastructure.configuration;
+package com.example.crud.infrastructure.filter;
 
-import com.example.crud.infrastructure.filter.AuthFilter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -38,8 +38,6 @@ public class BoardAnonymousService extends AbstractBoardService{
 
     @Override
     protected void validateUserForDelete(Object userInfo, Long id){
-        boardValidationService.validateBoard(id);
-
         BoardPasswordRequestDto dto = (BoardPasswordRequestDto) userInfo;
         boardValidationService.validateBoardPassword(id, dto.getPassword());
     }
@@ -57,8 +55,7 @@ public class BoardAnonymousService extends AbstractBoardService{
     //updatePost
     @Override
     protected BoardResponseDto executeUpdatePost(BoardRequestDto dto, Object userInfo, Long id){
-        boardValidationService.validateBoardPassword(id, dto.getPassword());
-        Board board = boardValidationService.validateBoard(id);
+        Board board = boardValidationService.validateBoardPassword(id, dto.getPassword());
 
         board.updatePost(dto.getTitle(), dto.getContent(), dto.getCategory());
         boardRepository.save(board);

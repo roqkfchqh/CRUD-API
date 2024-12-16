@@ -42,11 +42,14 @@ public class BoardValidationService {
         return PageRequest.of(page - 1, size, Sort.by("createdDate").descending());
     }
 
-    public void validateBoardPassword(Long id, String password){
-        String boardPassword = boardRepository.findPasswordById(id);
+    public Board validateBoardPassword(Long id, String password){
+        Board board = boardRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.CONTENT_NOT_FOUND));
+        String boardPassword = board.getPassword();
         if(!passwordEncoder.matches(password, boardPassword)){
             throw new CustomException(ErrorCode.WRONG_PASSWORD);
         }
+        return board;
     }
 
     public void validateCommentPassword(Long id, String password){
