@@ -32,7 +32,8 @@ public enum ErrorCode {
     EVENT_NOT_ACCEPTABLE(HttpStatus.NOT_ACCEPTABLE, "이벤트 타입이 잘못되었습니다."),
 
     //429
-    TOO_MANY_REQUESTS(HttpStatus.TOO_MANY_REQUESTS, "30초에 한번만 글을 쓸 수 있습니다."),
+    TOO_MANY_REQUESTS(HttpStatus.TOO_MANY_REQUESTS, "글 작성 횟수를 초과했습니다.(로그인 유저:1분에 10번, 익명 유저: 1분에 2번."),
+    TOO_MANY_LIKES(HttpStatus.TOO_MANY_REQUESTS, "좋아요 횟수를 초과했습니다.(로그인 유저:하루에 두번, 익명 유저: 하루에 한번."),
 
     //500
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 관리를 못해서 줴송합니다.."),
