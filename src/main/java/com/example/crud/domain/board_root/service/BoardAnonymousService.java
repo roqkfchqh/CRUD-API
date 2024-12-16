@@ -23,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class BoardAnonymousService extends AbstractBoardService{
 
+    private static final int POST_TTL = 600;
+
     private final BoardRepository boardRepository;
     private final PasswordEncoder passwordEncoder;
     private final BoardValidationService boardValidationService;
@@ -70,7 +72,7 @@ public class BoardAnonymousService extends AbstractBoardService{
     }
 
     //createComment
-    @CustomCacheable(key = "'post::' + #id", ttl = 600)
+    @CustomCacheable(key = "'post::' + #id", ttl = POST_TTL)
     public CommentResponseDto createCommentForAnonymous(CommentRequestDto dto){
         boardValidationService.validateAnonymousUser(dto.getNickname(), dto.getPassword());
         Board board = boardValidationService.validateBoard(dto.getBoardId());
@@ -84,7 +86,7 @@ public class BoardAnonymousService extends AbstractBoardService{
     }
 
     //deleteComment
-    @CustomCacheable(key = "'post::' + #id", ttl = 600)
+    @CustomCacheable(key = "'post::' + #id", ttl = POST_TTL)
     public void deleteCommentForAnonymous(Long commentId, CommentPasswordRequestDto dto){
         boardValidationService.validateCommentPassword(commentId, dto.getPassword());
 

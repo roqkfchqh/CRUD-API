@@ -28,7 +28,7 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        long total = queryFactory
+        Long total = queryFactory
                 .select(comment.count())
                 .from(comment)
                 .where(comment.board.eq(board))

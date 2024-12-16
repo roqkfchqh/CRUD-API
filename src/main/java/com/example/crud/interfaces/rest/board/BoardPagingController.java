@@ -14,28 +14,31 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class BoardPagingController {
 
+    private static final String PAGE_COUNT = "0";
+    private static final String PAGE_SIZE = "10";
+
     private final BoardPagingService boardPagingService;
 
     @GetMapping("/pages")
     public ResponseEntity<Page<BoardPagingResponseDto>> getPagedBoard(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size){
+            @RequestParam(defaultValue = PAGE_COUNT) int page,
+            @RequestParam(defaultValue = PAGE_SIZE) int size){
         return ResponseEntity.ok(boardPagingService.pagingBoard(page, size));
     }
 
     @GetMapping("/category/{keyword}")
     public ResponseEntity<Page<BoardPagingResponseDto>> getCategoryBoard(
             @PathVariable String keyword,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size){
+            @RequestParam(defaultValue = PAGE_COUNT) int page,
+            @RequestParam(defaultValue = PAGE_SIZE) int size){
         return ResponseEntity.ok(boardPagingService.pagingCategory(keyword, page, size));
     }
 
     @GetMapping("/search/{keyword}")
     public ResponseEntity<Page<BoardPagingResponseDto>> getSearchBoard(
             @PathVariable String keyword,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size){
+            @RequestParam(defaultValue = PAGE_COUNT) int page,
+            @RequestParam(defaultValue = PAGE_SIZE) int size){
         return ResponseEntity.ok(boardPagingService.pagingSearch(keyword, page, size));
     }
 }

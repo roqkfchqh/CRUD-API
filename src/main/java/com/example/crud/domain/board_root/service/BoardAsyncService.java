@@ -2,8 +2,7 @@ package com.example.crud.domain.board_root.service;
 
 import com.example.crud.domain.board_root.aggregate.Board;
 import com.example.crud.domain.board_root.repository.BoardRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -11,10 +10,14 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class BoardAsyncService {
 
-    @Autowired
+    private static final int HOT_VIEW = 100;
+    private static final int HOT_LIKE = 30;
+    private static final int TTL = 300;
+    private static final int HOT_TTL = 1200;
+
     private RedisTemplate<String, Object> redisTemplate;
     private final BoardRepository boardRepository;
 
@@ -28,12 +31,12 @@ public class BoardAsyncService {
     public void cacheWithDynamicTTL(Board board) {
         String cacheKey = "post::" + board.getId();
 
-        long viewThreshold = 100;   //조회수 임계값
-        long likeThreshold = 30;    //좋아요 임계값
-        Duration ttl = Duration.ofSeconds(600);  //기본 ttl
+        int viewThreshold = HOT_VIEW;   //조회수 임계값
+        int likeThreshold = HOT_LIKE;    //좋아요 임계값
+        Duration ttl = Duration.ofSeconds(TTL);  //기본 ttl
 
         if(board.getCount() > viewThreshold || board.getLiked() > likeThreshold){
-            ttl = Duration.ofSeconds(1200);  //hot data 는 ttl 3분으로 연장
+            ttl = Duration.ofSeconds(HOT_TTL);  //hot data 는 연장
         }
         redisTemplate.opsForValue().set(cacheKey, board, ttl);    //캐시에 저장, ttl 설정
     }

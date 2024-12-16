@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class BoardController {
 
+    private static final String PAGE_COUNT = "0";
+    private static final String PAGE_SIZE = "10";
+
     private final BoardService boardService;
     private final SessionCheckingService sessionCheckingService;
 
@@ -32,8 +35,10 @@ public class BoardController {
 
     @GetMapping("/{id}")
     public ResponseEntity<BoardReadResponseDto> readPost(
-            @PathVariable Long id){
-        return ResponseEntity.ok(boardService.readPost(id));
+            @PathVariable Long id,
+            @RequestParam(defaultValue = PAGE_COUNT) int page,
+            @RequestParam(defaultValue = PAGE_SIZE) int size){
+        return ResponseEntity.ok(boardService.readPost(id, page, size));
     }
 
     @PatchMapping("/{id}")

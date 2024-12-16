@@ -16,7 +16,7 @@ public class SessionAndCookieCheckingService {
         Cookie rememberMeCookie = new Cookie("rememberMe", user.getEmail());
         rememberMeCookie.setSecure(true);
         rememberMeCookie.setHttpOnly(true);
-        rememberMeCookie.setMaxAge(7 * 24 * 60 * 60);
+        rememberMeCookie.setMaxAge(7 * 24 * 60 * 60);   //7일
         rememberMeCookie.setPath("/");
         res.addCookie(rememberMeCookie);
     }

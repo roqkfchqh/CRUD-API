@@ -10,7 +10,6 @@ import com.example.crud.domain.board_root.aggregate.Board;
 import com.example.crud.domain.board_root.entities.Comment;
 import com.example.crud.domain.board_root.repository.BoardRepository;
 import com.example.crud.domain.board_root.repository.CommentRepository;
-import com.example.crud.domain.board_root.valueobjects.CommentSort;
 import com.example.crud.infrastructure.cache.CustomCacheable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -20,11 +19,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.example.crud.domain.board_root.valueobjects.CommentSort.DESC;
-
 @Service
 @RequiredArgsConstructor
 public class BoardPagingService {
+
+    private static final int BOARD_TTL = 240;
 
     private final BoardRepository boardRepository;
     private final CommentRepository commentRepository;
@@ -42,7 +41,7 @@ public class BoardPagingService {
 
     //category paging
     @Transactional(readOnly = true)
-    @CustomCacheable(key = "'boardC::' + #category + #page + #size", ttl = 240)
+    @CustomCacheable(key = "'boardC::' + #category + #page + #size", ttl = BOARD_TTL)
     public Page<BoardPagingResponseDto> pagingCategory(String category, int page, int size){
         Pageable pageable = boardValidationService.validatePageSize(page, size);
 
@@ -52,7 +51,7 @@ public class BoardPagingService {
 
     //search paging
     @Transactional(readOnly = true)
-    @CustomCacheable(key = "'boardS::' + #keyword + #page + #size", ttl = 240)
+    @CustomCacheable(key = "'boardS::' + #keyword + #page + #size", ttl = BOARD_TTL)
     public Page<BoardPagingResponseDto> pagingSearch(String keyword, int page, int size){
         Pageable pageable = boardValidationService.validatePageSize(page, size);
 
@@ -62,17 +61,12 @@ public class BoardPagingService {
 
     //comment paging
     @Transactional(readOnly = true)
-    public Page<CommentResponseDto> pagingComments(CommentSort sort, Long boardId, Integer page, Integer size){
+    public Page<CommentResponseDto> pagingComments(Long boardId, Integer page, Integer size){
         if(page < 1 || size < 1){
             throw new CustomException(ErrorCode.PAGING_ERROR);
         }
 
-        Pageable pageable;
-        if(sort == DESC){
-            pageable = PageRequest.of(page, size, Sort.by("created").descending());
-        }else{
-            pageable = PageRequest.of(page, size, Sort.by("created").ascending());
-        }
+        Pageable pageable = PageRequest.of(page, size, Sort.by("created").ascending());
 
         Board board = boardValidationService.validateBoard(boardId);
 

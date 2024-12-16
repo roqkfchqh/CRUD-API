@@ -12,13 +12,11 @@ import com.example.crud.domain.board_root.aggregate.Board;
 import com.example.crud.domain.board_root.entities.Comment;
 import com.example.crud.domain.board_root.repository.BoardRepository;
 import com.example.crud.domain.board_root.repository.CommentRepository;
-import com.example.crud.domain.board_root.valueobjects.CommentSort;
 import com.example.crud.domain.user_root.aggregate.User;
 import com.example.crud.domain.user_root.service.UserValidationService;
 import com.example.crud.infrastructure.cache.CustomCacheable;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,15 +26,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class BoardService extends AbstractBoardService{
 
+    private static final int POST_TTL = 600;
+
     private final BoardRepository boardRepository;
     private final CommentRepository commentRepository;
     private final UserValidationService userValidationService;
     private final BoardValidationService boardValidationService;
     private final BoardAsyncService boardAsyncService;
     private final BoardPagingService boardPagingService;
-
-    private static final int PAGE_COUNT = 0;
-    private static final int PAGE_SIZE = 10;
 
     @Override
     protected void validateUser(Object userInfo){
@@ -82,23 +79,23 @@ public class BoardService extends AbstractBoardService{
     }
 
     //readPost
-    @Value("${cache.view.threshold:100}")
+    //@Value("${cache.view.threshold:100}")
     @Transactional(readOnly = true)
-    @CustomCacheable(key = "'post::' + #id", ttl = 600)
-    public BoardReadResponseDto readPost(Long id){
+    @CustomCacheable(key = "'post::' + #id", ttl = POST_TTL)
+    public BoardReadResponseDto readPost(Long id, int page, int size){
         Board board = boardValidationService.validateBoard(id);
 
         board.updateCount(board.getCount() + 1);
         boardRepository.save(board);
 
         boardAsyncService.updateViewCountAsync(board);
-        Page<CommentResponseDto> comments = boardPagingService.pagingComments(CommentSort.ASC, id, PAGE_COUNT, PAGE_SIZE);
+        Page<CommentResponseDto> comments = boardPagingService.pagingComments(id, page, size);
         return BoardMapper.toReadDto(board, comments);
     }
 
     //likePost
-    @Value("${cache.view.threshold:30}")
-    @CustomCacheable(key = "'post::' + #id", ttl = 600)
+    //@Value("${cache.view.threshold:30}")
+    @CustomCacheable(key = "'post::' + #id", ttl = POST_TTL)
     public BoardResponseDto likePost(Long id) {
         Board board = boardValidationService.validateBoard(id);
 
@@ -108,7 +105,7 @@ public class BoardService extends AbstractBoardService{
     }
 
     //createComment
-    @CustomCacheable(key = "'post::' + #id", ttl = 600)
+    @CustomCacheable(key = "'post::' + #id", ttl = POST_TTL)
     public CommentResponseDto createComment(HttpServletRequest req, CommentRequestDto dto) {
         Board board = boardValidationService.validateBoard(dto.getBoardId());
         User user = userValidationService.validateUser(req);
@@ -122,7 +119,7 @@ public class BoardService extends AbstractBoardService{
     }
 
     //deleteComment
-    @CustomCacheable(key = "'post::' + #id", ttl = 600)
+    @CustomCacheable(key = "'post::' + #id", ttl = POST_TTL)
     public void deleteComment(HttpServletRequest req, CommentPasswordRequestDto dto, Long commentId) {
         userValidationService.validateUser(req);
         Board board = boardValidationService.validateBoard(dto.getBoardId());
