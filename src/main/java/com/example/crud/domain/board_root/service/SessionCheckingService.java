@@ -28,7 +28,7 @@ public class SessionCheckingService {
         if(sessionUser == null){
             board = boardAnonymousService.createPost(dto, dto);
         }else{
-            board = boardService.createPost(dto, sessionUser);
+            board = boardService.createPost(dto, req);
         }
         return board;
     }

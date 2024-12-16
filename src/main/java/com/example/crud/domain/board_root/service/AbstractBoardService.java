@@ -19,13 +19,13 @@ public abstract class AbstractBoardService {
     @CustomCacheable(key = "'post::' + #id", ttl = POST_TTL)
     public final BoardResponseDto updatePost(BoardRequestDto dto, Object userInfo, Long id){
         validateUser(userInfo);
-        return executeUpdatePost(dto, userInfo, id);
+        return executeUpdatePost(dto, id);
     }
 
     @CustomCacheEvict(key = "'post::' + #id")
     public final void deletePost(Object userInfo, Long id){
         validateUserForDelete(userInfo, id);
-        executeDeletePost(userInfo, id);
+        executeDeletePost(id);
     }
 
     protected abstract void validateUser(Object userInfo);
@@ -34,7 +34,7 @@ public abstract class AbstractBoardService {
 
     protected abstract BoardResponseDto executeCreatePost(BoardRequestDto dto, Object userInfo);
 
-    protected abstract BoardResponseDto executeUpdatePost(BoardRequestDto dto, Object userInfo, Long id);
+    protected abstract BoardResponseDto executeUpdatePost(BoardRequestDto dto, Long id);
 
-    protected abstract void executeDeletePost(Object userInfo, Long id);
+    protected abstract void executeDeletePost(Long id);
 }

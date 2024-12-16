@@ -51,8 +51,8 @@ public class BoardService extends AbstractBoardService{
     @Override
     protected BoardResponseDto executeCreatePost(BoardRequestDto dto, Object userInfo){
         HttpServletRequest req = (HttpServletRequest) userInfo;
-        User user = userValidationService.validateUser(req);
-        Board board = BoardMapper.toEntity(dto, user);
+        User sessionUser = (User) req.getSession().getAttribute("user");
+        Board board = BoardMapper.toEntity(dto, sessionUser);
 
         boardRepository.save(board);
         return BoardMapper.toDto(board);
@@ -60,9 +60,7 @@ public class BoardService extends AbstractBoardService{
 
     //updatePost
     @Override
-    protected BoardResponseDto executeUpdatePost(BoardRequestDto dto, Object userInfo, Long id){
-        HttpServletRequest req = (HttpServletRequest) userInfo;
-        userValidationService.validateUser(req);
+    protected BoardResponseDto executeUpdatePost(BoardRequestDto dto, Long id){
         Board board = boardValidationService.validateBoard(id);
 
         board.updatePost(dto.getContent(), dto.getTitle(), Category.valueOf(dto.getCategory()));
@@ -73,7 +71,7 @@ public class BoardService extends AbstractBoardService{
 
     //deletePost
     @Override
-    protected void executeDeletePost(Object userInfo, Long id){
+    protected void executeDeletePost(Long id){
         boardRepository.deleteById(id);
     }
 
