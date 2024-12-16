@@ -32,17 +32,18 @@ public class RedisRateLimiter {
         }
     }
 
-    public void isAllowedLikeAndRead(String key, Long boardId){
+    public void isAllowedLike(String key, Long boardId){
+        String redisKey = key + ":post:like" + boardId;
 
         int limit = key.startsWith("rate_limit:user:") ? USER_LIKE : ANONYMOUS_LIKE;
-        Long count = redisTemplate.opsForValue().increment(key);
+        Long count = redisTemplate.opsForValue().increment(redisKey);
 
         if(count == 1){
-            redisTemplate.expire(key, 1, TimeUnit.DAYS);
+            redisTemplate.expire(redisKey, 1, TimeUnit.DAYS);
         }
 
         if(count > limit){
-            throw new CustomException(ErrorCode.TOO_MANY_LIKES);
+            throw new CustomException(ErrorCode.TOO_MANY_REQUESTS);
         }
     }
 }

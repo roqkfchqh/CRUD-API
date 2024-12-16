@@ -3,6 +3,7 @@ package com.example.crud.infrastructure.limit;
 import com.example.crud.application.exception.CustomException;
 import com.example.crud.application.exception.errorcode.ErrorCode;
 import com.example.crud.domain.user_root.aggregate.User;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
@@ -29,13 +30,12 @@ public class RateLimitingAspect {
         return joinPoint.proceed();
     }
 
-    //like, read limit
-    @Around("execution(* com.example.crud.interfaces.rest.board.BoardController.likePost(..)) || " +
-            "execution(* com.example.crud.interfaces.rest.board.BoardController.readPost(..))")
-    public Object checkRateLimitLikeAndReadPost(ProceedingJoinPoint joinPoint) throws Throwable {
+    //like limit
+    @Around("execution(* com.example.crud.interfaces.rest.board.BoardController.likePost(..))")
+    public Object checkRateLimitLike(ProceedingJoinPoint joinPoint) throws Throwable {
         String key = getKey();
         Long boardId = getBoardId(joinPoint.getArgs());
-        redisRateLimiter.isAllowedLikeAndRead(key, boardId);
+        redisRateLimiter.isAllowedLike(key, boardId);
 
         return joinPoint.proceed();
     }
@@ -48,7 +48,7 @@ public class RateLimitingAspect {
     private String getKey() {
         String clientIp = getClientIp();
         HttpSession session = request.getSession(false);
-        String sessionId = (String) session.getAttribute("sessionId");
+        String sessionId = session.getId();
         String key;
 
         if(sessionId != null){
