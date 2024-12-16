@@ -13,14 +13,14 @@ import java.util.concurrent.TimeUnit;
 public class RedisRateLimiter {
 
     private static final int USER_CREATE = 10;
-    private static final int ANONYMOUS_UPDATE = 2;
+    private static final int ANONYMOUS_CREATE = 2;
     private static final int USER_LIKE = 2;
     private static final int ANONYMOUS_LIKE = 1;
 
     private final RedisTemplate<String, Object> redisTemplate;
 
     public void isAllowed(String key) {
-        int limit = key.startsWith("rate_limit:user:") ? USER_CREATE : ANONYMOUS_UPDATE;
+        int limit = key.startsWith("rate_limit:user:") ? USER_CREATE : ANONYMOUS_CREATE;
         Long count = redisTemplate.opsForValue().increment(key);
 
         if(count == 1){
