@@ -20,30 +20,30 @@ public class RedisRateLimiter {
     private final RedisTemplate<String, Object> redisTemplate;
 
     public void isAllowed(String key) {
-        int limit = key.startsWith("rate_limit:user:") ? USER_CREATE : ANONYMOUS_CREATE;
+        int limit = key.startsWith("rate_limit:user:") && key.contains("create") ? USER_CREATE : ANONYMOUS_CREATE;
         Long count = redisTemplate.opsForValue().increment(key);
 
         if(count == 1){
             redisTemplate.expire(key, 1, TimeUnit.MINUTES);
         }
 
-        if(count > limit){
+        if(count >= limit){
             throw new CustomException(ErrorCode.TOO_MANY_REQUESTS);
         }
     }
 
     public void isAllowedLike(String key, Long boardId){
-        String redisKey = key + ":post:like" + boardId;
+        String redisKey = key + ":post:" + boardId;
 
-        int limit = key.startsWith("rate_limit:user:") ? USER_LIKE : ANONYMOUS_LIKE;
+        int limit = key.startsWith("rate_limit:user:") && key.contains("like") ? USER_LIKE : ANONYMOUS_LIKE;
         Long count = redisTemplate.opsForValue().increment(redisKey);
 
         if(count == 1){
             redisTemplate.expire(redisKey, 1, TimeUnit.DAYS);
         }
 
-        if(count > limit){
-            throw new CustomException(ErrorCode.TOO_MANY_REQUESTS);
+        if(count >= limit){
+            throw new CustomException(ErrorCode.TOO_MANY_LIKES);
         }
     }
 }

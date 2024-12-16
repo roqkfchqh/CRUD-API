@@ -24,7 +24,7 @@ public class RateLimitingAspect {
     @Around("execution(* com.example.crud.interfaces.rest.board.BoardController.createPost(..)) || " +
             "execution(* com.example.crud.interfaces.rest.comment.CommentController.createComment(..))")
     public Object checkRateLimit(ProceedingJoinPoint joinPoint) throws Throwable {
-        String key = getKey();
+        String key = getKey() + "create";
         redisRateLimiter.isAllowed(key);
 
         return joinPoint.proceed();
@@ -33,7 +33,7 @@ public class RateLimitingAspect {
     //like limit
     @Around("execution(* com.example.crud.interfaces.rest.board.BoardController.likePost(..))")
     public Object checkRateLimitLike(ProceedingJoinPoint joinPoint) throws Throwable {
-        String key = getKey();
+        String key = getKey() + "like";
         Long boardId = getBoardId(joinPoint.getArgs());
         redisRateLimiter.isAllowedLike(key, boardId);
 
@@ -48,10 +48,9 @@ public class RateLimitingAspect {
     private String getKey() {
         String clientIp = getClientIp();
         HttpSession session = request.getSession(false);
-        String sessionId = session.getId();
         String key;
 
-        if(sessionId != null){
+        if(session != null){
             User user = (User) session.getAttribute("user");
             key = "rate_limit:user:" + user.getId();
         }else{
