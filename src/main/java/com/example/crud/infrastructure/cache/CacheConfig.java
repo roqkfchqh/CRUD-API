@@ -19,6 +19,8 @@ import org.springframework.data.redis.serializer.RedisSerializationContext;
 @RequiredArgsConstructor
 public class CacheConfig {
 
+    private final ObjectMapper objectMapper;
+
     @Bean
     public RedisCacheManager cacheManager(RedisConnectionFactory redisConnectionFactory){
         ObjectMapper mapper = new ObjectMapper();

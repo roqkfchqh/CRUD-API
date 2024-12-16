@@ -11,8 +11,6 @@ import com.example.crud.domain.board_root.valueobjects.Category;
 import com.example.crud.domain.user_root.aggregate.User;
 import org.springframework.data.domain.Page;
 
-import java.util.List;
-
 public class BoardMapper {
 
     private final static int HOT_TITLE = 10;
