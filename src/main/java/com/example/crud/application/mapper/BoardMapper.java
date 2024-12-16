@@ -7,6 +7,7 @@ import com.example.crud.application.dto.board.BoardResponseDto;
 
 import com.example.crud.application.dto.comment.CommentResponseDto;
 import com.example.crud.domain.board_root.aggregate.Board;
+import com.example.crud.domain.board_root.valueobjects.Category;
 import com.example.crud.domain.user_root.aggregate.User;
 import org.springframework.data.domain.Page;
 
@@ -22,7 +23,7 @@ public class BoardMapper {
                 .title(hotTitle)
                 .content(board.getContent())
                 .nickname(board.getNickname())
-                .category(board.getCategory())
+                .category(board.getCategory().toString())
                 .liked(board.getLiked())
                 .count(board.getCount())
                 .createdAt(board.getCreatedAt())
@@ -37,7 +38,7 @@ public class BoardMapper {
                 .title(hotTitle)
                 .content(board.getContent())
                 .nickname(board.getNickname())
-                .category(board.getCategory())
+                .category(board.getCategory().toString())
                 .liked(board.getLiked())
                 .count(board.getCount())
                 .createdAt(board.getCreatedAt())
@@ -53,7 +54,7 @@ public class BoardMapper {
                 .id(board.getId())
                 .title(hotTitle)
                 .nickname(board.getNickname())
-                .category(board.getCategory())
+                .category(board.getCategory().toString())
                 .liked(board.getLiked())
                 .count(board.getCount())
                 .createdAt(board.getCreatedAt())
@@ -66,7 +67,7 @@ public class BoardMapper {
         return Board.builder()
                 .title(dto.getTitle())
                 .content(dto.getContent())
-                .category(dto.getCategory())
+                .category(Category.valueOf(dto.getCategory()))
                 .nickname(user.getName())
                 .user(user)
                 .build();
@@ -77,7 +78,7 @@ public class BoardMapper {
         return Board.builder()
                 .title(dto.getTitle())
                 .content(dto.getContent())
-                .category(dto.getCategory())
+                .category(Category.valueOf(dto.getCategory()))
                 .nickname(dto.getNickname())
                 .password(encodedPassword)
                 .build();

@@ -1,6 +1,5 @@
 package com.example.crud.application.dto.board;
 
-import com.example.crud.domain.board_root.valueobjects.Category;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,7 +16,7 @@ public class BoardResponseDto {
     private String title;
     private String content;
     private String nickname;
-    private Category category;
+    private String category;
     private int liked;
     private int count;
 
