@@ -66,7 +66,7 @@ public class BoardPagingService {
             throw new CustomException(ErrorCode.PAGING_ERROR);
         }
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by("created").ascending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").ascending());
 
         Board board = boardValidationService.validateBoard(boardId);
 

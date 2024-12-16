@@ -6,8 +6,8 @@ import com.example.crud.application.dto.board.BoardResponseDto;
 import com.example.crud.application.dto.comment.CommentPasswordRequestDto;
 import com.example.crud.application.dto.comment.CommentRequestDto;
 import com.example.crud.application.dto.comment.CommentResponseDto;
-import com.example.crud.domain.user_root.aggregate.User;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,10 +22,10 @@ public class SessionCheckingService {
             HttpServletRequest req,
             BoardRequestDto dto){
 
-        User sessionUser = (User) req.getSession().getAttribute("user");
+        HttpSession session = req.getSession(false);
         BoardResponseDto board;
 
-        if(sessionUser == null){
+        if(session == null){
             board = boardAnonymousService.createPost(dto, dto);
         }else{
             board = boardService.createPost(dto, req);
@@ -38,10 +38,10 @@ public class SessionCheckingService {
             Long id,
             BoardRequestDto dto){
 
-        User sessionUser = (User) req.getSession().getAttribute("user");
+        HttpSession session = req.getSession(false);
         BoardResponseDto board;
 
-        if(sessionUser == null){
+        if(session == null){
             board = boardAnonymousService.updatePost(dto, dto, id);
         }else{
             board = boardService.updatePost(dto, req, id);
@@ -54,9 +54,9 @@ public class SessionCheckingService {
             Long id,
             BoardPasswordRequestDto dto){
 
-        User sessionUser = (User) req.getSession().getAttribute("user");
+        HttpSession session = req.getSession(false);
 
-        if(sessionUser == null){
+        if(session == null){
             boardAnonymousService.deletePost(dto, id);
         }else{
             boardService.deletePost(req, id);
@@ -67,10 +67,10 @@ public class SessionCheckingService {
             HttpServletRequest req,
             CommentRequestDto dto){
 
-        User sessionUser = (User) req.getSession().getAttribute("user");
+        HttpSession session = req.getSession(false);
         CommentResponseDto comment;
 
-        if(sessionUser == null){
+        if(session == null){
             comment = boardAnonymousService.createCommentForAnonymous(dto);
         }else{
             comment = boardService.createComment(req, dto);
@@ -83,9 +83,9 @@ public class SessionCheckingService {
             Long id,
             CommentPasswordRequestDto dto){
 
-        User sessionUser = (User) req.getSession().getAttribute("user");
+        HttpSession session = req.getSession(false);
 
-        if(sessionUser == null){
+        if(session == null){
             boardAnonymousService.deleteCommentForAnonymous(id, dto);
         }else{
             boardService.deleteComment(req, dto, id);
