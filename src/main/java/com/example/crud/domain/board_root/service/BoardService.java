@@ -12,6 +12,7 @@ import com.example.crud.domain.board_root.aggregate.Board;
 import com.example.crud.domain.board_root.entities.Comment;
 import com.example.crud.domain.board_root.repository.BoardRepository;
 import com.example.crud.domain.board_root.repository.CommentRepository;
+import com.example.crud.domain.board_root.valueobjects.Category;
 import com.example.crud.domain.user_root.aggregate.User;
 import com.example.crud.domain.user_root.service.UserValidationService;
 import com.example.crud.infrastructure.cache.CustomCacheable;
@@ -64,7 +65,7 @@ public class BoardService extends AbstractBoardService{
         userValidationService.validateUser(req);
         Board board = boardValidationService.validateBoard(id);
 
-        board.updatePost(dto.getContent(), dto.getTitle(), dto.getCategory());
+        board.updatePost(dto.getContent(), dto.getTitle(), Category.valueOf(dto.getCategory()));
 
         boardRepository.save(board);
         return BoardMapper.toDto(board);

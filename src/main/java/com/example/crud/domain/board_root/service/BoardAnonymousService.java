@@ -12,6 +12,7 @@ import com.example.crud.domain.board_root.aggregate.Board;
 import com.example.crud.domain.board_root.entities.Comment;
 import com.example.crud.domain.board_root.repository.BoardRepository;
 import com.example.crud.domain.board_root.repository.CommentRepository;
+import com.example.crud.domain.board_root.valueobjects.Category;
 import com.example.crud.infrastructure.cache.CustomCacheable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -57,7 +58,7 @@ public class BoardAnonymousService extends AbstractBoardService{
     protected BoardResponseDto executeUpdatePost(BoardRequestDto dto, Object userInfo, Long id){
         Board board = boardValidationService.validateBoardPassword(id, dto.getPassword());
 
-        board.updatePost(dto.getTitle(), dto.getContent(), dto.getCategory());
+        board.updatePost(dto.getTitle(), dto.getContent(), Category.valueOf(dto.getCategory()));
         boardRepository.save(board);
         return BoardMapper.toDto(board);
     }
