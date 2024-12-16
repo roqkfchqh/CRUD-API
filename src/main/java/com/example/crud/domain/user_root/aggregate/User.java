@@ -13,7 +13,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @NoArgsConstructor
 @Getter
 @Builder
-@EntityListeners(AuditingEntityListener.class)
 @Table(name = "users")
 public class User extends DateTimeEntity {
 

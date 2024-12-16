@@ -18,7 +18,6 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
-@EntityListeners(AuditingEntityListener.class)
 @Table(name = "boards")
 public class Board extends DateTimeEntity {
 

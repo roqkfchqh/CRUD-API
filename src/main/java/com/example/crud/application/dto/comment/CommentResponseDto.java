@@ -17,7 +17,6 @@ public class CommentResponseDto {
     private Long bigCommentId;
     private List<CommentResponseDto> smallComment;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
 
     private CommentResponseDto(Comment comment, List<CommentResponseDto> smallCommentDto){

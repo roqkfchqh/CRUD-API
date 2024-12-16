@@ -17,7 +17,6 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
-@EntityListeners(AuditingEntityListener.class)
 @Table(name = "comments")
 public class Comment extends DateTimeEntity {
 

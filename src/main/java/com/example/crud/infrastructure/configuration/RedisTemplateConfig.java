@@ -19,6 +19,7 @@ public class RedisTemplateConfig {
 
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+
         // key -> string, value -> object
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         // Redis 와 연결 관리
