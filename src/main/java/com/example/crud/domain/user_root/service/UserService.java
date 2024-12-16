@@ -11,6 +11,7 @@ import com.example.crud.domain.board_root.repository.BoardRepository;
 import com.example.crud.domain.user_root.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +23,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
     private final UserValidationService userValidationService;
+    private final PasswordEncoder passwordEncoder;
 
     //read
     public UserResponseDto readUser(HttpServletRequest req){
@@ -37,7 +39,8 @@ public class UserService {
         User user = userValidationService.validateUser(req);
         userValidationService.validatePassword(user.getPassword(), dto.getCurrentPassword());
 
-        user.updateUser(dto.getName(), dto.getNewPassword());
+        String encodedPassword = passwordEncoder.encode(dto.getNewPassword());
+        user.updateUser(dto.getName(), encodedPassword);
         return UserMapper.toDto(user);
     }
 

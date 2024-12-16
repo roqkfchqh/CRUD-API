@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.List;
 
@@ -49,9 +48,5 @@ public class Comment extends DateTimeEntity {
     @OneToMany(mappedBy = "parentsComment")
     @JsonManagedReference
     private List<Comment> childComment;
-
-    public void updateContent(String content) {
-        this.content = content;
-    }
 
 }
