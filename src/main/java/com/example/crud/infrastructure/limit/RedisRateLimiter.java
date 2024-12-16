@@ -27,7 +27,7 @@ public class RedisRateLimiter {
             redisTemplate.expire(key, 1, TimeUnit.MINUTES);
         }
 
-        if(count >= limit){
+        if(count > limit){
             throw new CustomException(ErrorCode.TOO_MANY_REQUESTS);
         }
     }
@@ -42,7 +42,7 @@ public class RedisRateLimiter {
             redisTemplate.expire(redisKey, 1, TimeUnit.DAYS);
         }
 
-        if(count >= limit){
+        if(count > limit){
             throw new CustomException(ErrorCode.TOO_MANY_LIKES);
         }
     }

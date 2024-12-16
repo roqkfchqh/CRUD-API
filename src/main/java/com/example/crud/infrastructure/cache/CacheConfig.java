@@ -1,6 +1,5 @@
 package com.example.crud.infrastructure.cache;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -20,8 +19,6 @@ import org.springframework.data.redis.serializer.RedisSerializationContext;
 @RequiredArgsConstructor
 public class CacheConfig {
 
-    private final ObjectMapper objectMapper;
-
     @Bean
     public RedisCacheManager cacheManager(RedisConnectionFactory redisConnectionFactory){
         ObjectMapper mapper = new ObjectMapper();
@@ -36,7 +33,7 @@ public class CacheConfig {
                 .computePrefixWith(CacheKeyPrefix.simple())
                 // 캐시에 저장할 값을 어떻게 직렬화 / 역직렬화 할것인지
                 .serializeValuesWith(RedisSerializationContext.SerializationPair
-                        .fromSerializer(new GenericJackson2JsonRedisSerializer(objectMapper))); // Value 직렬화
+                        .fromSerializer(new GenericJackson2JsonRedisSerializer(mapper))); // Value 직렬화
 
         return RedisCacheManager.builder(redisConnectionFactory)
                 .cacheDefaults(defaultConfig)

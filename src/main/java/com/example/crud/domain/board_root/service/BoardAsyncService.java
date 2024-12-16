@@ -15,7 +15,7 @@ public class BoardAsyncService {
     @Async
     @CustomCacheable(key = "'post::' + #board.id")
     public void updateViewCountAsync(Board board) {
-        board.updateCount(board.getCount() + 1);
+        board.updateCount();
         boardRepository.save(board);
     }
 }

@@ -76,12 +76,10 @@ public class BoardService extends AbstractBoardService{
     }
 
     //readPost
-    @Transactional(readOnly = true)
+    @Transactional
     @CustomCacheable(key = "'post::' + #id")
     public BoardReadResponseDto readPost(Long id, int page, int size){
         Board board = boardValidationService.validateBoard(id);
-
-        board.updateCount(board.getCount() + 1);
         boardRepository.save(board);
 
         boardAsyncService.updateViewCountAsync(board);

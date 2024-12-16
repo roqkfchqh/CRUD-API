@@ -67,8 +67,8 @@ public class Board extends DateTimeEntity {
         this.liked = liked;
     }
 
-    public void updateCount(int count) {
-        this.count = count;
+    public void updateCount() {
+        this.count ++;
     }
 
     public void addComment(Comment comment) {
