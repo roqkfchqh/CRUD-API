@@ -14,6 +14,7 @@ import com.example.crud.domain.board_root.domain_service.BoardDomainService;
 import com.example.crud.domain.board_root.entities.Comment;
 import com.example.crud.domain.board_root.repository.BoardRepository;
 import com.example.crud.domain.board_root.repository.CommentRepository;
+import com.example.crud.domain.board_root.valueobjects.Category;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -46,7 +47,7 @@ public class BoardAnonymousService extends AbstractBoardService {
     @Override
     protected BoardResponseDto executeCreatePost(BoardRequestDto dto, Object userInfo){
         String encodedPassword = passwordEncoder.encode(dto.getPassword());
-        Board board = boardDomainService.createAnonymousBoard(dto.getTitle(), dto.getContent(), dto.getCategory(), dto.getNickname(), encodedPassword);
+        Board board = boardDomainService.createAnonymousBoard(dto.getTitle(), dto.getContent(), Category.valueOf(dto.getCategory()), dto.getNickname(), encodedPassword);
 
         boardRepository.save(board);
         return BoardMapper.toDto(board);
@@ -57,7 +58,7 @@ public class BoardAnonymousService extends AbstractBoardService {
     protected BoardResponseDto executeUpdatePost(BoardRequestDto dto, Long id){
         Board board = boardValidationService.validateBoardPassword(id, dto.getPassword());
 
-        boardDomainService.updateBoard(board, dto.getTitle(), dto.getContent(), dto.getCategory());
+        boardDomainService.updateBoard(board, dto.getTitle(), dto.getContent(), Category.valueOf(dto.getCategory()));
         boardRepository.save(board);
         return BoardMapper.toDto(board);
     }

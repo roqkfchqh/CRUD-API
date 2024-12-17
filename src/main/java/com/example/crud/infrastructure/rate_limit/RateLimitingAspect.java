@@ -4,7 +4,6 @@ import com.example.crud.application.exception.CustomException;
 import com.example.crud.application.exception.errorcode.ErrorCode;
 import com.example.crud.domain.user_root.aggregate.User;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -46,12 +45,11 @@ public class RateLimitingAspect {
 
     private String getKey() {
         String clientIp = getClientIp();
-        HttpSession session = request.getSession(false);
+        User sessionUser = (User) request.getSession().getAttribute("user");
         String key;
 
-        if(session != null){
-            User user = (User) session.getAttribute("user");
-            key = "rate_limit:user:" + user.getId();
+        if(sessionUser != null){
+            key = "rate_limit:user:" + sessionUser.getId();
         }else{
             key = "rate_limit:ip:" + clientIp;
         }

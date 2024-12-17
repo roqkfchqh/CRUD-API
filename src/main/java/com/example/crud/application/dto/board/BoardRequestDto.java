@@ -21,7 +21,7 @@ public class BoardRequestDto {
     private String content;
 
     @NotBlank(message = "카테고리를 입력해주세요.")
-    private Category category;
+    private String category;
 
     //비로그인 사용자만
     private String nickname;

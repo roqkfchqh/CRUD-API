@@ -17,7 +17,7 @@ public class BoardViewCountBatch {
     private final BoardValidationService boardValidationService;
     private final BoardDomainService boardDomainService;
 
-    @Scheduled(fixedDelay = 500)
+    @Scheduled(fixedDelay = 5000)
     public void processViewCountBatch(){
         Long boardId;
 

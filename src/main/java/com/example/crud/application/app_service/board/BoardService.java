@@ -15,6 +15,7 @@ import com.example.crud.domain.board_root.domain_service.BoardDomainService;
 import com.example.crud.domain.board_root.entities.Comment;
 import com.example.crud.domain.board_root.repository.BoardRepository;
 import com.example.crud.domain.board_root.repository.CommentRepository;
+import com.example.crud.domain.board_root.valueobjects.Category;
 import com.example.crud.domain.user_root.aggregate.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -51,7 +52,7 @@ public class BoardService extends AbstractBoardService {
     @Override
     protected BoardResponseDto executeCreatePost(BoardRequestDto dto, Object userInfo){
         User user = (User) userInfo;
-        Board board = boardDomainService.createBoard(dto.getTitle(), dto.getContent(), dto.getCategory(), user.getName());
+        Board board = boardDomainService.createBoard(dto.getTitle(), dto.getContent(), Category.valueOf(dto.getCategory()), user.getName());
 
         boardRepository.save(board);
         return BoardMapper.toDto(board);
@@ -61,7 +62,7 @@ public class BoardService extends AbstractBoardService {
     @Override
     protected BoardResponseDto executeUpdatePost(BoardRequestDto dto, Long id){
         Board board = boardValidationService.validateBoard(id);
-        boardDomainService.updateBoard(board, dto.getTitle(), dto.getContent(), dto.getCategory());
+        boardDomainService.updateBoard(board, dto.getTitle(), dto.getContent(), Category.valueOf(dto.getCategory()));
 
         boardRepository.save(board);
         return BoardMapper.toDto(board);
