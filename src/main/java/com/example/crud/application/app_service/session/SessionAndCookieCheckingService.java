@@ -1,4 +1,4 @@
-package com.example.crud.domain.user_root.service;
+package com.example.crud.application.app_service.session;
 
 import com.example.crud.domain.user_root.aggregate.User;
 import jakarta.servlet.http.Cookie;

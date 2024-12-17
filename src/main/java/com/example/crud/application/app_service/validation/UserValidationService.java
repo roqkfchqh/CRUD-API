@@ -1,10 +1,9 @@
-package com.example.crud.domain.user_root.service;
+package com.example.crud.application.app_service.validation;
 
 import com.example.crud.application.exception.CustomException;
 import com.example.crud.application.exception.errorcode.ErrorCode;
 import com.example.crud.domain.user_root.aggregate.User;
 import com.example.crud.domain.user_root.repository.UserRepository;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,14 +17,12 @@ public class UserValidationService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public User validateUser(HttpServletRequest req) {
-        User sessionUser = (User) req.getSession().getAttribute("user");
-        if(sessionUser == null){
+    public void validateUser(User user) {
+        if(user == null){
             throw new CustomException(ErrorCode.LOGIN_REQUIRED);
         }
 
-        return userRepository.findById(sessionUser.getId())
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        userRepository.findById(user.getId()).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
 
     public void validatePassword(String sessionPassword, String inputPassword){

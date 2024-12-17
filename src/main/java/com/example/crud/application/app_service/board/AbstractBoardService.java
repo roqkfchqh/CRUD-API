@@ -1,28 +1,22 @@
-package com.example.crud.domain.board_root.service;
+package com.example.crud.application.app_service.board;
 
 import com.example.crud.application.dto.board.BoardRequestDto;
 import com.example.crud.application.dto.board.BoardResponseDto;
-import com.example.crud.infrastructure.cache.CustomCacheEvict;
-import com.example.crud.infrastructure.cache.CustomCacheable;
 import org.springframework.stereotype.Service;
 
 @Service
 public abstract class AbstractBoardService {
-
-    private static final int POST_TTL = 600;
 
     public final BoardResponseDto createPost(BoardRequestDto dto, Object userInfo){
         validateUser(userInfo);
         return executeCreatePost(dto, userInfo);
     }
 
-    @CustomCacheable(key = "'post::' + #id", ttl = POST_TTL)
     public final BoardResponseDto updatePost(BoardRequestDto dto, Object userInfo, Long id){
         validateUser(userInfo);
         return executeUpdatePost(dto, id);
     }
 
-    @CustomCacheEvict(key = "'post::' + #id")
     public final void deletePost(Object userInfo, Long id){
         validateUserForDelete(userInfo, id);
         executeDeletePost(id);

@@ -1,4 +1,4 @@
-package com.example.crud.domain.user_root.service;
+package com.example.crud.application.app_service.user;
 
 import com.example.crud.application.dto.user.LoginRequestDto;
 import com.example.crud.application.exception.CustomException;

@@ -2,13 +2,10 @@ package com.example.crud.application.mapper;
 
 import com.example.crud.application.dto.board.BoardPagingResponseDto;
 import com.example.crud.application.dto.board.BoardReadResponseDto;
-import com.example.crud.application.dto.board.BoardRequestDto;
 import com.example.crud.application.dto.board.BoardResponseDto;
 
 import com.example.crud.application.dto.comment.CommentResponseDto;
 import com.example.crud.domain.board_root.aggregate.Board;
-import com.example.crud.domain.board_root.valueobjects.Category;
-import com.example.crud.domain.user_root.aggregate.User;
 import org.springframework.data.domain.Page;
 
 public class BoardMapper {
@@ -59,28 +56,6 @@ public class BoardMapper {
                 .count(board.getCount())
                 .createdAt(board.getCreatedAt())
                 .commentsNum((long) board.getComments().size())
-                .build();
-    }
-
-    //dto -> entity
-    public static Board toEntity(BoardRequestDto dto, User user){
-        return Board.builder()
-                .title(dto.getTitle())
-                .content(dto.getContent())
-                .category(Category.valueOf(dto.getCategory()))
-                .nickname(user.getName())
-                .user(user)
-                .build();
-    }
-
-    //dto -> entity (anonymous)
-    public static Board toEntityWithAnonymous(BoardRequestDto dto, String encodedPassword){
-        return Board.builder()
-                .title(dto.getTitle())
-                .content(dto.getContent())
-                .category(Category.valueOf(dto.getCategory()))
-                .nickname(dto.getNickname())
-                .password(encodedPassword)
                 .build();
     }
 

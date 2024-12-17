@@ -1,8 +1,8 @@
-package com.example.crud.domain.board_root.service;
+package com.example.crud.application.app_service.board;
 
 import com.example.crud.domain.board_root.aggregate.Board;
+import com.example.crud.domain.board_root.domain_service.BoardDomainService;
 import com.example.crud.domain.board_root.repository.BoardRepository;
-import com.example.crud.infrastructure.cache.CustomCacheable;
 import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -11,11 +11,11 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class BoardAsyncService {
     private final BoardRepository boardRepository;
+    private final BoardDomainService boardDomainService;
 
     @Async
-    @CustomCacheable(key = "'post::' + #board.id")
     public void updateViewCountAsync(Board board) {
-        board.updateCount();
+        boardDomainService.countBoard(board);
         boardRepository.save(board);
     }
 }

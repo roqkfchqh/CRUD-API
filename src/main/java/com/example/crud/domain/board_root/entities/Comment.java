@@ -49,4 +49,21 @@ public class Comment extends DateTimeEntity {
     @JsonManagedReference
     private List<Comment> childComment;
 
+    public static Comment create(String nickname, String content, Board board) {
+        return Comment.builder()
+                .nickname(nickname)
+                .content(content)
+                .board(board)
+                .build();
+    }
+
+    public static Comment createAnonymous(String nickname, String content, Board board, String password) {
+        return Comment.builder()
+                .nickname(nickname)
+                .content(content)
+                .board(board)
+                .password(password)
+                .build();
+    }
+
 }

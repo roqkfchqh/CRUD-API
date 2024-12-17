@@ -28,7 +28,15 @@ public class User extends DateTimeEntity {
     @Column(nullable = false)
     private String password;
 
-    public void updateUser(String name, String password){
+    public static User create(String name, String email, String password) {
+        return User.builder()
+                .name(name)
+                .email(email)
+                .password(password)
+                .build();
+    }
+
+    public void update(String name, String password){
         if(name != null){
             this.name = name;
         }
@@ -36,4 +44,6 @@ public class User extends DateTimeEntity {
             this.password = password;
         }
     }
+
+
 }

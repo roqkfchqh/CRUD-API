@@ -1,5 +1,6 @@
 package com.example.crud.application.dto.board;
 
+import com.example.crud.domain.board_root.valueobjects.Category;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -20,7 +21,7 @@ public class BoardRequestDto {
     private String content;
 
     @NotBlank(message = "카테고리를 입력해주세요.")
-    private String category;
+    private Category category;
 
     //비로그인 사용자만
     private String nickname;

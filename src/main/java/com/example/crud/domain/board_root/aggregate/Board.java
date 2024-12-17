@@ -57,14 +57,8 @@ public class Board extends DateTimeEntity {
     @Builder.Default
     private List<Comment> comments = new ArrayList<>();
 
-    public void updatePost(String content, String title, Category category) {
-        this.content = content;
-        this.title = title;
-        this.category = category;
-    }
-
-    public void updateLiked(int liked) {
-        this.liked = liked;
+    public void updateLiked() {
+        this.liked ++;
     }
 
     public void updateCount() {
@@ -80,4 +74,30 @@ public class Board extends DateTimeEntity {
         comments.remove(comment);
         comment.setBoard(null);
     }
+
+    public static Board create(String title, String content, Category category, String nickname) {
+        return Board.builder()
+                .title(title)
+                .content(content)
+                .category(category)
+                .nickname(nickname)
+                .build();
+    }
+
+    public static Board createAnonymous(String title, String content, Category category, String nickname, String password) {
+        return Board.builder()
+                .title(title)
+                .content(content)
+                .category(category)
+                .nickname(nickname)
+                .password(password)
+                .build();
+    }
+
+    public void update(String title, String content, Category category) {
+        this.title = title;
+        this.content = content;
+        this.category = category;
+    }
+
 }

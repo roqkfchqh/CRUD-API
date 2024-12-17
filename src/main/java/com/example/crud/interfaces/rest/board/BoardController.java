@@ -4,8 +4,9 @@ import com.example.crud.application.dto.board.BoardPasswordRequestDto;
 import com.example.crud.application.dto.board.BoardReadResponseDto;
 import com.example.crud.application.dto.board.BoardRequestDto;
 import com.example.crud.application.dto.board.BoardResponseDto;
-import com.example.crud.domain.board_root.service.BoardService;
-import com.example.crud.domain.board_root.service.SessionCheckingService;
+import com.example.crud.application.app_service.board.BoardService;
+import com.example.crud.application.app_service.session.SessionCheckingService;
+import com.example.crud.domain.user_root.aggregate.User;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,8 +28,9 @@ public class BoardController {
     public ResponseEntity<BoardResponseDto> createPost(
             HttpServletRequest req,
             @Valid @RequestBody BoardRequestDto dto){
+        User sessionUser = (User) req.getSession().getAttribute("user");
 
-        BoardResponseDto board = sessionCheckingService.CreatePost(req, dto);
+        BoardResponseDto board = sessionCheckingService.CreatePost(sessionUser, dto);
 
         return ResponseEntity.ok(board);
     }
@@ -46,8 +48,9 @@ public class BoardController {
             HttpServletRequest req,
             @PathVariable Long id,
             @Valid @RequestBody BoardRequestDto dto){
+        User sessionUser = (User) req.getSession().getAttribute("user");
 
-        BoardResponseDto board = sessionCheckingService.UpdatePost(req, id, dto);
+        BoardResponseDto board = sessionCheckingService.UpdatePost(sessionUser, id, dto);
 
         return ResponseEntity.ok(board);
     }
@@ -62,8 +65,9 @@ public class BoardController {
             HttpServletRequest req,
             @PathVariable Long id,
             @Valid @RequestBody(required = false) BoardPasswordRequestDto dto){
+        User sessionUser = (User) req.getSession().getAttribute("user");
 
-        sessionCheckingService.DeletePost(req, id, dto);
+        sessionCheckingService.DeletePost(sessionUser, id, dto);
 
         return ResponseEntity.ok("해당 게시물이 정상적으로 삭제되었습니다.");
     }

@@ -1,5 +1,6 @@
-package com.example.crud.domain.user_root.service;
+package com.example.crud.application.app_service.user;
 
+import com.example.crud.application.app_service.validation.UserValidationService;
 import com.example.crud.application.dto.user.CurrentPasswordRequestDto;
 import com.example.crud.application.dto.user.UpdateRequestDto;
 import com.example.crud.application.dto.user.UserResponseDto;
@@ -9,7 +10,7 @@ import com.example.crud.application.mapper.UserMapper;
 import com.example.crud.domain.user_root.aggregate.User;
 import com.example.crud.domain.board_root.repository.BoardRepository;
 import com.example.crud.domain.user_root.repository.UserRepository;
-import jakarta.servlet.http.HttpServletRequest;
+import com.example.crud.domain.user_root.service.UserDomainService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,29 +25,30 @@ public class UserService {
     private final BoardRepository boardRepository;
     private final UserValidationService userValidationService;
     private final PasswordEncoder passwordEncoder;
+    private final UserDomainService userDomainService;
 
     //read
-    public UserResponseDto readUser(HttpServletRequest req){
-        User user = userValidationService.validateUser(req);
+    public UserResponseDto readUser(User user){
+        userValidationService.validateUser(user);
         return UserMapper.toDto(user);
     }
 
     //update
     public UserResponseDto updateUser(
             UpdateRequestDto dto,
-            HttpServletRequest req){
+            User user){
 
-        User user = userValidationService.validateUser(req);
+        userValidationService.validateUser(user);
         userValidationService.validatePassword(user.getPassword(), dto.getCurrentPassword());
 
         String encodedPassword = passwordEncoder.encode(dto.getNewPassword());
-        user.updateUser(dto.getName(), encodedPassword);
+        userDomainService.updateUser(user, dto.getName(), encodedPassword);
         return UserMapper.toDto(user);
     }
 
     //delete
-    public void deleteUser(HttpServletRequest req, CurrentPasswordRequestDto currentPasswordRequestDto){
-        User user = userValidationService.validateUser(req);
+    public void deleteUser(User user, CurrentPasswordRequestDto currentPasswordRequestDto){
+        userValidationService.validateUser(user);
         userValidationService.validatePassword(user.getPassword(), currentPasswordRequestDto.getCurrentPassword());
         boardRepository.deleteByUserId(user.getId());
         userRepository.deleteById(user.getId());

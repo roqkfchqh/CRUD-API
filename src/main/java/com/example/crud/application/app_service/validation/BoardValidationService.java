@@ -1,4 +1,4 @@
-package com.example.crud.domain.board_root.service;
+package com.example.crud.application.app_service.validation;
 
 import com.example.crud.application.exception.CustomException;
 import com.example.crud.application.exception.errorcode.ErrorCode;

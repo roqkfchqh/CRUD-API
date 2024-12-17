@@ -1,9 +1,8 @@
-package com.example.crud.infrastructure.limit;
+package com.example.crud.infrastructure.rate_limit;
 
 import com.example.crud.application.exception.CustomException;
 import com.example.crud.application.exception.errorcode.ErrorCode;
 import com.example.crud.domain.user_root.aggregate.User;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
@@ -20,7 +19,7 @@ public class RateLimitingAspect {
     private final RedisRateLimiter redisRateLimiter;
     private final HttpServletRequest request;
 
-    //create limit
+    //create rate_limit
     @Around("execution(* com.example.crud.interfaces.rest.board.BoardController.createPost(..)) || " +
             "execution(* com.example.crud.interfaces.rest.comment.CommentController.createComment(..))")
     public Object checkRateLimit(ProceedingJoinPoint joinPoint) throws Throwable {
@@ -30,7 +29,7 @@ public class RateLimitingAspect {
         return joinPoint.proceed();
     }
 
-    //like limit
+    //like rate_limit
     @Around("execution(* com.example.crud.interfaces.rest.board.BoardController.likePost(..))")
     public Object checkRateLimitLike(ProceedingJoinPoint joinPoint) throws Throwable {
         String key = getKey() + "like";

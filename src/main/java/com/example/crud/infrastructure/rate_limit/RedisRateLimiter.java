@@ -1,4 +1,4 @@
-package com.example.crud.infrastructure.limit;
+package com.example.crud.infrastructure.rate_limit;
 
 import com.example.crud.application.exception.CustomException;
 import com.example.crud.application.exception.errorcode.ErrorCode;

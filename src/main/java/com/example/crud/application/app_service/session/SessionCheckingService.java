@@ -1,13 +1,14 @@
-package com.example.crud.domain.board_root.service;
+package com.example.crud.application.app_service.session;
 
+import com.example.crud.application.app_service.board.BoardAnonymousService;
+import com.example.crud.application.app_service.board.BoardService;
 import com.example.crud.application.dto.board.BoardPasswordRequestDto;
 import com.example.crud.application.dto.board.BoardRequestDto;
 import com.example.crud.application.dto.board.BoardResponseDto;
 import com.example.crud.application.dto.comment.CommentPasswordRequestDto;
 import com.example.crud.application.dto.comment.CommentRequestDto;
 import com.example.crud.application.dto.comment.CommentResponseDto;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
+import com.example.crud.domain.user_root.aggregate.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,76 +20,69 @@ public class SessionCheckingService {
     private final BoardAnonymousService boardAnonymousService;
 
     public BoardResponseDto CreatePost(
-            HttpServletRequest req,
+            User user,
             BoardRequestDto dto){
 
-        HttpSession session = req.getSession(false);
         BoardResponseDto board;
 
-        if(session == null){
+        if(user == null){
             board = boardAnonymousService.createPost(dto, dto);
         }else{
-            board = boardService.createPost(dto, req);
+            board = boardService.createPost(dto, user);
         }
         return board;
     }
 
     public BoardResponseDto UpdatePost(
-            HttpServletRequest req,
+            User user,
             Long id,
             BoardRequestDto dto){
 
-        HttpSession session = req.getSession(false);
         BoardResponseDto board;
 
-        if(session == null){
+        if(user == null){
             board = boardAnonymousService.updatePost(dto, dto, id);
         }else{
-            board = boardService.updatePost(dto, req, id);
+            board = boardService.updatePost(dto, user, id);
         }
         return board;
     }
 
     public void DeletePost(
-            HttpServletRequest req,
+            User user,
             Long id,
             BoardPasswordRequestDto dto){
 
-        HttpSession session = req.getSession(false);
-
-        if(session == null){
+        if(user == null){
             boardAnonymousService.deletePost(dto, id);
         }else{
-            boardService.deletePost(req, id);
+            boardService.deletePost(user, id);
         }
     }
 
     public CommentResponseDto CreateComment(
-            HttpServletRequest req,
+            User user,
             CommentRequestDto dto){
 
-        HttpSession session = req.getSession(false);
         CommentResponseDto comment;
 
-        if(session == null){
+        if(user == null){
             comment = boardAnonymousService.createCommentForAnonymous(dto);
         }else{
-            comment = boardService.createComment(req, dto);
+            comment = boardService.createComment(user, dto);
         }
         return comment;
     }
 
     public void DeleteComment(
-            HttpServletRequest req,
+            User user,
             Long id,
             CommentPasswordRequestDto dto){
 
-        HttpSession session = req.getSession(false);
-
-        if(session == null){
+        if(user == null){
             boardAnonymousService.deleteCommentForAnonymous(id, dto);
         }else{
-            boardService.deleteComment(req, dto, id);
+            boardService.deleteComment(dto, id);
         }
     }
 }

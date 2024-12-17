@@ -1,6 +1,6 @@
 package com.example.crud.infrastructure.filter;
 
-import com.example.crud.domain.user_root.service.UserService;
+import com.example.crud.application.app_service.user.UserService;
 import com.example.crud.domain.user_root.aggregate.User;
 import jakarta.servlet.*;
 import jakarta.servlet.http.Cookie;

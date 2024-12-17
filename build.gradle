@@ -37,29 +37,45 @@ tasks.withType(Test).configureEach {
 }
 
 dependencies {
+	//spring boot
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.postgresql:postgresql:42.7.2'
-	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
-	implementation 'org.projectlombok:lombok'
-	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-	implementation 'org.springframework.boot:spring-boot-starter-data-redis-reactive'
-	implementation 'org.apache.commons:commons-pool2'
-	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
-	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
-
-	testImplementation 'org.springframework.security:spring-security-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
+	//jpa
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+
+	//spring security
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	testImplementation 'org.springframework.security:spring-security-test'
+
+	//postgresql
+	implementation 'org.postgresql:postgresql:42.7.2'
 	runtimeOnly 'org.postgresql:postgresql'
 
+	//swagger
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
+
+	//redis
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis-reactive'
+
+	//pool
+	implementation 'org.apache.commons:commons-pool2'
+
+	//jackson
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+
+	//lombok
+	implementation 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
+
+	//querydsl
+	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
 	annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
 	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
-	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
 }
 
 clean {	delete file('src/main/generated')}
