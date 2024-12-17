@@ -4,8 +4,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.concurrent.TimeUnit;
-
 @Service
 @AllArgsConstructor
 public class BoardQueueService {
@@ -15,7 +13,6 @@ public class BoardQueueService {
     public void addToQueue(Long boardId){
         redisTemplate.opsForList().rightPush("board:viewCountQueue", boardId);
     }
-
 
     public Long fetchFromQueue(){
         Object value = redisTemplate.opsForList().leftPop("board:viewCountQueue");

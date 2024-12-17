@@ -23,6 +23,7 @@ public class AuthFilter implements Filter {
         HttpServletResponse res = (HttpServletResponse) response;
 
         //로그인 사용자인지 확인
+//      String sessionUserId = (String) req.getSession().getAttribute("userId");
         User sessionUser = (User) req.getSession().getAttribute("user");
         if(sessionUser != null){
             chain.doFilter(request, response);
