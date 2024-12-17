@@ -74,11 +74,10 @@ public class BoardService extends AbstractBoardService {
     }
 
     //readPost
-    @Transactional
     public BoardReadResponseDto readPost(Long id, int page, int size){
         Board board = boardValidationService.validateBoard(id);
-
         boardAsyncService.updateViewCountAsync(board);
+
         Page<CommentResponseDto> comments = boardPagingService.pagingComments(id, page, size);
         return BoardMapper.toReadDto(board, comments);
     }
