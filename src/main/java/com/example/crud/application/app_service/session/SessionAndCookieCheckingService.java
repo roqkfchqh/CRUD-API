@@ -1,6 +1,5 @@
 package com.example.crud.application.app_service.session;
 
-import com.example.crud.domain.user_root.aggregate.User;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -9,11 +8,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class SessionAndCookieCheckingService {
 
-    public void remember(HttpServletRequest req, HttpServletResponse res, User user) {
-        req.getSession().setAttribute("user", user);
+    public void remember(HttpServletRequest req, HttpServletResponse res, String userId) {
+        req.getSession().setAttribute("userId", userId);
         req.getSession().setMaxInactiveInterval(1800);
 
-        Cookie rememberMeCookie = new Cookie("rememberMe", user.getEmail());
+        Cookie rememberMeCookie = new Cookie("rememberMe", userId);
         rememberMeCookie.setSecure(true);
         rememberMeCookie.setHttpOnly(true);
         rememberMeCookie.setMaxAge(7 * 24 * 60 * 60);   //7일

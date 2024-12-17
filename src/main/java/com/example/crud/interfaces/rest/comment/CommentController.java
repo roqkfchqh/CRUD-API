@@ -4,7 +4,6 @@ import com.example.crud.application.dto.comment.CommentRequestDto;
 import com.example.crud.application.dto.comment.CommentPasswordRequestDto;
 import com.example.crud.application.dto.comment.CommentResponseDto;
 import com.example.crud.application.app_service.session.SessionCheckingService;
-import com.example.crud.domain.user_root.aggregate.User;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,9 +21,9 @@ public class CommentController {
             HttpServletRequest req,
             @RequestBody CommentRequestDto dto){
 
-        User sessionUser = (User) req.getSession().getAttribute("user");
+        String sessionUserId = (String) req.getSession().getAttribute("userId");
 
-        CommentResponseDto comment = sessionCheckingService.CreateComment(sessionUser, dto);
+        CommentResponseDto comment = sessionCheckingService.CreateComment(sessionUserId, dto);
         return ResponseEntity.ok(comment);
     }
 
@@ -34,9 +33,9 @@ public class CommentController {
             @PathVariable Long id,
             @RequestBody CommentPasswordRequestDto dto){
 
-        User sessionUser = (User) req.getSession().getAttribute("user");
+        String sessionUserId = (String) req.getSession().getAttribute("userId");
 
-        sessionCheckingService.DeleteComment(sessionUser, id, dto);
+        sessionCheckingService.DeleteComment(sessionUserId, id, dto);
         return ResponseEntity.noContent().build();
     }
 }

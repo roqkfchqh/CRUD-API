@@ -3,7 +3,6 @@ package com.example.crud.interfaces.rest.user;
 import com.example.crud.application.dto.user.CurrentPasswordRequestDto;
 import com.example.crud.application.dto.user.UpdateRequestDto;
 import com.example.crud.application.dto.user.UserResponseDto;
-import com.example.crud.domain.user_root.aggregate.User;
 import com.example.crud.application.app_service.session.SessionAndCookieCheckingService;
 import com.example.crud.application.app_service.user.UserService;
 import com.example.crud.application.app_service.validation.UserValidationService;
@@ -27,8 +26,8 @@ public class UserController {
     @GetMapping
     public ResponseEntity<UserResponseDto> getUser(
             HttpServletRequest req){
-        User sessionUser = getSessionUser(req);
-        return ResponseEntity.ok(userService.readUser(sessionUser));
+        String sessionUserId = getSessionId(req);
+        return ResponseEntity.ok(userService.readUser(sessionUserId));
     }
 
     //update
@@ -36,8 +35,8 @@ public class UserController {
     public ResponseEntity<UserResponseDto> updateUser(
             @Valid @RequestBody UpdateRequestDto dto,
             HttpServletRequest req){
-        User sessionUser = getSessionUser(req);
-        UserResponseDto user = userService.updateUser(dto, sessionUser);
+        String sessionUserId = getSessionId(req);
+        UserResponseDto user = userService.updateUser(dto, sessionUserId);
         return ResponseEntity.ok(user);
     }
 
@@ -47,16 +46,16 @@ public class UserController {
             @RequestBody CurrentPasswordRequestDto currentPasswordRequestDto,
             HttpServletRequest req,
             HttpServletResponse res){
-        User sessionUser = getSessionUser(req);
-        userService.deleteUser(sessionUser, currentPasswordRequestDto);
+        String sessionUserId = getSessionId(req);
+        userService.deleteUser(sessionUserId, currentPasswordRequestDto);
         req.getSession().invalidate();
         sessionAndCookieCheckingService.delete(req, res);
         return ResponseEntity.ok("회원 탈퇴가 정상적으로 완료되었습니다.");
     }
 
-    private User getSessionUser(HttpServletRequest req) {
-        User sessionUser = (User) req.getSession().getAttribute("user");
-        userValidationService.validateUser(sessionUser);
-        return sessionUser;
+    private String getSessionId(HttpServletRequest req) {
+        String sessionUserId = (String) req.getSession().getAttribute("userId");
+        userValidationService.validateUser(sessionUserId);
+        return sessionUserId;
     }
 }

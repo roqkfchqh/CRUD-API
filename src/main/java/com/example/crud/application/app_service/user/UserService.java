@@ -28,30 +28,31 @@ public class UserService {
     private final UserDomainService userDomainService;
 
     //read
-    public UserResponseDto readUser(User user){
-        userValidationService.validateUser(user);
+    public UserResponseDto readUser(String userId){
+        userValidationService.validateUser(userId);
         return UserMapper.toDto(user);
     }
 
     //update
     public UserResponseDto updateUser(
             UpdateRequestDto dto,
-            User user){
+            String userId){
 
-        userValidationService.validateUser(user);
-        userValidationService.validatePassword(user.getPassword(), dto.getCurrentPassword());
+        userValidationService.validateUser(userId);
+        userValidationService.validatePassword(userId, dto.getCurrentPassword());
 
         String encodedPassword = passwordEncoder.encode(dto.getNewPassword());
-        userDomainService.updateUser(user, dto.getName(), encodedPassword);
+        userDomainService.updateUser(userId, dto.getName(), encodedPassword);
         return UserMapper.toDto(user);
     }
 
     //delete
-    public void deleteUser(User user, CurrentPasswordRequestDto currentPasswordRequestDto){
-        userValidationService.validateUser(user);
-        userValidationService.validatePassword(user.getPassword(), currentPasswordRequestDto.getCurrentPassword());
-        boardRepository.deleteByUserId(user.getId());
-        userRepository.deleteById(user.getId());
+    public void deleteUser(String userId, CurrentPasswordRequestDto currentPasswordRequestDto){
+        userValidationService.validateUser(userId);
+        userValidationService.validatePassword(userId, currentPasswordRequestDto.getCurrentPassword());
+
+        boardRepository.deleteByUserId(Long.valueOf(userId));
+        userRepository.deleteById(Long.valueOf(userId));
     }
 
     //get(for cookie)

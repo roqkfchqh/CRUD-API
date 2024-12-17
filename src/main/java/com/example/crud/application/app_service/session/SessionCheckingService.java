@@ -8,7 +8,6 @@ import com.example.crud.application.dto.board.BoardResponseDto;
 import com.example.crud.application.dto.comment.CommentPasswordRequestDto;
 import com.example.crud.application.dto.comment.CommentRequestDto;
 import com.example.crud.application.dto.comment.CommentResponseDto;
-import com.example.crud.domain.user_root.aggregate.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,66 +19,66 @@ public class SessionCheckingService {
     private final BoardAnonymousService boardAnonymousService;
 
     public BoardResponseDto CreatePost(
-            User user,
+            String userId,
             BoardRequestDto dto){
 
         BoardResponseDto board;
 
-        if(user == null){
+        if(userId == null){
             board = boardAnonymousService.createPost(dto, dto);
         }else{
-            board = boardService.createPost(dto, user);
+            board = boardService.createPost(dto, userId);
         }
         return board;
     }
 
     public BoardResponseDto UpdatePost(
-            User user,
+            String userId,
             Long id,
             BoardRequestDto dto){
 
         BoardResponseDto board;
 
-        if(user == null){
+        if(userId == null){
             board = boardAnonymousService.updatePost(dto, dto, id);
         }else{
-            board = boardService.updatePost(dto, user, id);
+            board = boardService.updatePost(dto, userId, id);
         }
         return board;
     }
 
     public void DeletePost(
-            User user,
+            String userId,
             Long id,
             BoardPasswordRequestDto dto){
 
-        if(user == null){
+        if(userId == null){
             boardAnonymousService.deletePost(dto, id);
         }else{
-            boardService.deletePost(user, id);
+            boardService.deletePost(userId, id);
         }
     }
 
     public CommentResponseDto CreateComment(
-            User user,
+            String userId,
             CommentRequestDto dto){
 
         CommentResponseDto comment;
 
-        if(user == null){
+        if(userId == null){
             comment = boardAnonymousService.createCommentForAnonymous(dto);
         }else{
-            comment = boardService.createComment(user, dto);
+            comment = boardService.createComment(userId, dto);
         }
         return comment;
     }
 
     public void DeleteComment(
-            User user,
+            String userId,
             Long id,
             CommentPasswordRequestDto dto){
 
-        if(user == null){
+        if(userId == null){
             boardAnonymousService.deleteCommentForAnonymous(id, dto);
         }else{
             boardService.deleteComment(dto, id);

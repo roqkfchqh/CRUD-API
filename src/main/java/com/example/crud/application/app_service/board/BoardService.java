@@ -16,7 +16,6 @@ import com.example.crud.domain.board_root.entities.Comment;
 import com.example.crud.domain.board_root.repository.BoardRepository;
 import com.example.crud.domain.board_root.repository.CommentRepository;
 import com.example.crud.domain.board_root.valueobjects.Category;
-import com.example.crud.domain.user_root.aggregate.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -35,23 +34,26 @@ public class BoardService extends AbstractBoardService {
     private final BoardPagingService boardPagingService;
     private final BoardDomainService boardDomainService;
 
+    //TODO: DDD와 mapper클래스는 안어울리는거같다.
+    //TODO: User entity는 어쩔수없이 불러와야하는거같은데 전부 repository로 처리해야하나? ex) user.getName()
+
     @Override
     protected void validateUser(Object userInfo){
-        User user = (User) userInfo;
-        userValidationService.validateUser(user);
+        String userId = (String) userInfo;
+        userValidationService.validateUser(userId);
     }
 
     @Override
     protected void validateUserForDelete(Object userInfo, Long id){
         boardValidationService.validateBoard(id);
-        User user = (User) userInfo;
-        userValidationService.validateUser(user);
+        String userId = (String) userInfo;
+        userValidationService.validateUser(userId);
     }
 
     //createPost
     @Override
     protected BoardResponseDto executeCreatePost(BoardRequestDto dto, Object userInfo){
-        User user = (User) userInfo;
+        String userId = (String) userInfo;
         Board board = boardDomainService.createBoard(dto.getTitle(), dto.getContent(), Category.valueOf(dto.getCategory()), user.getName());
 
         boardRepository.save(board);
@@ -93,7 +95,7 @@ public class BoardService extends AbstractBoardService {
     }
 
     //createComment
-    public CommentResponseDto createComment(User user, CommentRequestDto dto) {
+    public CommentResponseDto createComment(String userId, CommentRequestDto dto) {
         Board board = boardValidationService.validateBoard(dto.getBoardId());
         Comment comment = boardDomainService.createComment(user.getName(), dto.getContent(), board);
 

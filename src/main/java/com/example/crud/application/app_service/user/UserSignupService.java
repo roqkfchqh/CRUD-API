@@ -20,7 +20,7 @@ public class UserSignupService {
     private final UserDomainService userDomainService;
     private final PasswordEncoder passwordEncoder;
 
-    public User registerUser(SignupRequestDto dto){
+    public String registerUser(SignupRequestDto dto){
         userValidationService.isEmailTaken(dto.getEmail());
         String encodedPassword = passwordEncoder.encode(dto.getPassword());
 

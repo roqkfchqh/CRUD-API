@@ -1,7 +1,6 @@
 package com.example.crud.infrastructure.filter;
 
 import com.example.crud.application.app_service.user.UserService;
-import com.example.crud.domain.user_root.aggregate.User;
 import jakarta.servlet.*;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,9 +22,8 @@ public class AuthFilter implements Filter {
         HttpServletResponse res = (HttpServletResponse) response;
 
         //로그인 사용자인지 확인
-//      String sessionUserId = (String) req.getSession().getAttribute("userId");
-        User sessionUser = (User) req.getSession().getAttribute("user");
-        if(sessionUser != null){
+        Long sessionUserId = (Long) req.getSession().getAttribute("userId");
+        if(sessionUserId != null){
             chain.doFilter(request, response);
             return;
         }
@@ -35,9 +33,9 @@ public class AuthFilter implements Filter {
             for(Cookie cookie : cookies){
                 if("rememberMe".equals(cookie.getName())){
                     String email = cookie.getValue();
-                    User user = Objects.requireNonNull(userService).getUserByEmail(email);
-                    if(user != null){
-                        req.getSession().setAttribute("user", user);
+                    Long userId = Objects.requireNonNull(userService).getUserByEmail(email).getId();
+                    if(userId != null){
+                        req.getSession().setAttribute("userId", userId);
                     }
                 }
             }

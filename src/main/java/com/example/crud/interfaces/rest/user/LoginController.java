@@ -5,7 +5,6 @@ import com.example.crud.application.exception.CustomException;
 import com.example.crud.application.exception.errorcode.ErrorCode;
 import com.example.crud.application.app_service.session.SessionAndCookieCheckingService;
 import com.example.crud.application.app_service.user.UserLoginService;
-import com.example.crud.domain.user_root.aggregate.User;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -28,9 +27,9 @@ public class LoginController {
             @RequestBody LoginRequestDto dto,
             HttpServletRequest req,
             HttpServletResponse res){
-        User user = userLoginService.loginUser(dto);
-        if(user != null) {
-            sessionAndCookieCheckingService.remember(req, res, user);
+        String userId = userLoginService.loginUser(dto);
+        if(userId != null) {
+            sessionAndCookieCheckingService.remember(req, res, userId);
 
             return ResponseEntity.ok("로그인 완료");
         }else{
@@ -42,7 +41,7 @@ public class LoginController {
     public ResponseEntity<String> logout(
             HttpServletRequest req,
             HttpServletResponse res){
-        if(req.getSession().getAttribute("user") == null){
+        if(req.getSession().getAttribute("userId") == null){
             throw new CustomException(ErrorCode.BAD_GATEWAY);
         }
         sessionAndCookieCheckingService.delete(req, res);

@@ -20,7 +20,7 @@ public class UserLoginService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)
-    public User loginUser(LoginRequestDto dto){
+    public String loginUser(LoginRequestDto dto){
         Optional<User> user = userRepository.findByEmail(dto.getEmail());
         if(user.isEmpty() || !passwordEncoder.matches(dto.getPassword(), user.get().getPassword())){
             throw new CustomException(ErrorCode.WRONG_EMAIL_OR_PASSWORD);
