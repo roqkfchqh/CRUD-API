@@ -18,6 +18,7 @@ import org.springframework.data.redis.serializer.RedisSerializationContext;
 @EnableCaching
 @RequiredArgsConstructor
 public class CacheConfig {
+    //안쓰고있음
 
     private final ObjectMapper objectMapper;
 

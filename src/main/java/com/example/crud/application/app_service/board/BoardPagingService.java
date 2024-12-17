@@ -23,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class BoardPagingService {
 
+    //TODO: search 기능 합쳐야됨
+
     private final BoardRepository boardRepository;
     private final CommentRepository commentRepository;
     private final BoardValidationService boardValidationService;

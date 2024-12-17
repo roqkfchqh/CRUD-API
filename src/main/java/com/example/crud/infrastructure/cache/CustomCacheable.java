@@ -8,6 +8,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface CustomCacheable {
+    //안쓰고있음
     String key();
     long ttl() default 600;
     long hotTtl() default 1200;

@@ -23,12 +23,12 @@ public class BoardValidationService {
     private final CommentRepository commentRepository;
 
     @Transactional(readOnly = true)
-    public Board validateBoard(Long id){
+    public void validateBoard(Long id){
         return boardRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.CONTENT_NOT_FOUND));
     }
 
-    public Comment validateComment(Long id, Board board) {
+    public void validateComment(Long id, Board board) {
         return board.getComments().stream()
                 .filter(c -> c.getId().equals(id))
                 .findFirst()
@@ -42,7 +42,7 @@ public class BoardValidationService {
         return PageRequest.of(page - 1, size, Sort.by("createdDate").descending());
     }
 
-    public Board validateBoardPassword(Long id, String password){
+    public void validateBoardPassword(Long id, String password){
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.CONTENT_NOT_FOUND));
         String boardPassword = board.getPassword();

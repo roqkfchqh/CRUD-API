@@ -19,6 +19,7 @@ import java.time.Duration;
 @Component
 @RequiredArgsConstructor
 public class CacheAspect {
+    //안쓰고있음
 
     private final RedisTemplate<String, Object> redisTemplate;
     private final ExpressionParser parser = new SpelExpressionParser();
