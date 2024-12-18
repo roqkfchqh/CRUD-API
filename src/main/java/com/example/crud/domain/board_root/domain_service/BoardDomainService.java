@@ -2,13 +2,14 @@ package com.example.crud.domain.board_root.domain_service;
 
 import com.example.crud.domain.board_root.aggregate.Board;
 import com.example.crud.domain.board_root.entities.Comment;
+import com.example.crud.domain.user_root.aggregate.User;
 import org.springframework.stereotype.Service;
 
 @Service
 public class BoardDomainService {
 
-    public Comment createComment(Long userId, String nickname, String content, Board board){
-        Comment comment = Comment.create(userId, nickname, content, board);
+    public Comment createComment(User user, String nickname, String content, Board board){
+        Comment comment = Comment.create(user, nickname, content, board);
         board.addComment(comment);
         return comment;
     }

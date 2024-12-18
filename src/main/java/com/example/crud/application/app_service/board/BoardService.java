@@ -112,7 +112,7 @@ public class BoardService extends AbstractBoardService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        Comment comment = boardDomainService.createComment(user.getId(), user.getName(), dto.getContent(), board);
+        Comment comment = boardDomainService.createComment(user, user.getName(), dto.getContent(), board);
 
         commentRepository.save(comment);
         boardRepository.save(board);
