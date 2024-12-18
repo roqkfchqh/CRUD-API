@@ -19,8 +19,7 @@ public class RateLimitingAspect {
     private final HttpServletRequest request;
 
     //create rate_limit
-    @Around("execution(* com.example.crud.interfaces.rest.board.BoardController.createPost(..)) || " +
-            "execution(* com.example.crud.interfaces.rest.comment.CommentController.createComment(..))")
+    @Around("execution(* com.example.crud.interfaces.rest.board.BoardController.createPost(..))")
     public Object checkRateLimit(ProceedingJoinPoint joinPoint) throws Throwable {
         String key = getKey() + "create";
         redisRateLimiter.isAllowed(key);
