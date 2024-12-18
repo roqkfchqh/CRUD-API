@@ -32,16 +32,14 @@ public class BoardValidationService {
 
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public void validateBoardPassword(Long id, String password){
-        String boardPassword = boardRepository.findPasswordById(id);
-        if(!passwordEncoder.matches(password, boardPassword)){
+        if(!passwordEncoder.matches(password, boardRepository.findPasswordById(id))){
             throw new CustomException(ErrorCode.WRONG_PASSWORD);
         }
     }
 
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public void validateCommentPassword(Long id, String password){
-        String commentPassword = String.valueOf(commentRepository.findPasswordById(id));
-        if(!passwordEncoder.matches(password, commentPassword)){
+        if(!passwordEncoder.matches(password, commentRepository.findPasswordById(id))){
             throw new CustomException(ErrorCode.WRONG_PASSWORD);
         }
     }

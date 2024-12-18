@@ -9,6 +9,7 @@ import com.example.crud.application.mapper.CommentMapper;
 import com.example.crud.domain.board_root.entities.Comment;
 import com.example.crud.domain.board_root.repository.BoardRepository;
 import com.example.crud.domain.board_root.repository.CommentRepository;
+import com.example.crud.domain.board_root.valueobjects.Category;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -40,7 +41,7 @@ public class BoardPagingService {
     public Page<BoardPagingResponseDto> pagingCategory(String category, int page, int size){
         Pageable pageable = validatePageSize(page, size);
 
-        return boardRepository.findByCategory(category.toUpperCase(), pageable)
+        return boardRepository.findByCategory(Category.valueOf(category.toUpperCase()), pageable)
                 .map(BoardMapper::toPagingDto);
     }
 
