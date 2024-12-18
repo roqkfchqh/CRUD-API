@@ -105,7 +105,6 @@ public class BoardAnonymousService extends AbstractBoardService {
     protected void validateUserForUpdate(Object userInfo, Long id){
         BoardRequestDto dto = (BoardRequestDto) userInfo;
         boardValidationService.validateBoardPassword(id, dto.getPassword());
-        boardValidationService.validateAnonymousUser(dto.getNickname(), dto.getPassword());
     }
 
     @Override

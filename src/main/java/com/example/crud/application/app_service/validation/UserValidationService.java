@@ -27,9 +27,7 @@ public class UserValidationService {
 
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public void validatePassword(Long id, String inputPassword){
-        String userPassword = userRepository.findPasswordById(id);
-
-        if(!passwordEncoder.matches(inputPassword, userPassword)){
+        if(!passwordEncoder.matches(inputPassword, userRepository.findPasswordById(id))){
             throw new CustomException(ErrorCode.WRONG_PASSWORD);
         }
     }

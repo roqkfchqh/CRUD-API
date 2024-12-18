@@ -29,12 +29,13 @@ public class Comment extends DateTimeEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(updatable = false)
+    @Column(updatable = false, length = 10)
     private String nickname;
 
+    @Column(updatable = false, length = 10)
     private String password;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100)
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -4,7 +4,6 @@ import com.example.crud.application.app_service.validation.UserValidationService
 import com.example.crud.application.dto.user.SignupRequestDto;
 import com.example.crud.domain.user_root.aggregate.User;
 import com.example.crud.domain.user_root.repository.UserRepository;
-import com.example.crud.domain.user_root.service.UserDomainService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,7 +16,6 @@ public class UserSignupService {
 
     private final UserRepository userRepository;
     private final UserValidationService userValidationService;
-    private final UserDomainService userDomainService;
     private final PasswordEncoder passwordEncoder;
 
     public Long registerUser(SignupRequestDto dto){

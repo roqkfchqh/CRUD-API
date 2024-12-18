@@ -1,6 +1,5 @@
 package com.example.crud.application.dto.board;
 
-import com.example.crud.domain.board_root.valueobjects.Category;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;

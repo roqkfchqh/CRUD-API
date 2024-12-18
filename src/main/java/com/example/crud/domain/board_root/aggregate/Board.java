@@ -30,19 +30,20 @@ public class Board extends DateTimeEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(updatable = false)
+    @Column(updatable = false, length = 10)
     private String nickname;
 
+    @Column(updatable = false, length = 10)
     private String password;
 
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false, length = 20)
     private String title;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 300)
     private String content;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, length = 50)
     @Builder.Default
     private Category category = Category.FREE;
 
