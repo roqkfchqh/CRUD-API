@@ -11,8 +11,10 @@ import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static lombok.AccessLevel.PRIVATE;
+
 @Entity
-@AllArgsConstructor
+@AllArgsConstructor(access = PRIVATE)
 @NoArgsConstructor
 @Getter
 @Setter

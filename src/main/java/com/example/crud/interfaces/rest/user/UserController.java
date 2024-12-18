@@ -26,7 +26,7 @@ public class UserController {
     @GetMapping
     public ResponseEntity<UserResponseDto> getUser(
             HttpServletRequest req){
-        String sessionUserId = getSessionId(req);
+        Long sessionUserId = getSessionId(req);
         return ResponseEntity.ok(userService.readUser(sessionUserId));
     }
 
@@ -35,7 +35,7 @@ public class UserController {
     public ResponseEntity<UserResponseDto> updateUser(
             @Valid @RequestBody UpdateRequestDto dto,
             HttpServletRequest req){
-        String sessionUserId = getSessionId(req);
+        Long sessionUserId = getSessionId(req);
         UserResponseDto user = userService.updateUser(dto, sessionUserId);
         return ResponseEntity.ok(user);
     }
@@ -46,15 +46,15 @@ public class UserController {
             @RequestBody CurrentPasswordRequestDto currentPasswordRequestDto,
             HttpServletRequest req,
             HttpServletResponse res){
-        String sessionUserId = getSessionId(req);
+        Long sessionUserId = getSessionId(req);
         userService.deleteUser(sessionUserId, currentPasswordRequestDto);
         req.getSession().invalidate();
         sessionAndCookieCheckingService.delete(req, res);
         return ResponseEntity.ok("회원 탈퇴가 정상적으로 완료되었습니다.");
     }
 
-    private String getSessionId(HttpServletRequest req) {
-        String sessionUserId = (String) req.getSession().getAttribute("userId");
+    private Long getSessionId(HttpServletRequest req) {
+        Long sessionUserId = (Long) req.getSession().getAttribute("userId");
         userValidationService.validateUser(sessionUserId);
         return sessionUserId;
     }

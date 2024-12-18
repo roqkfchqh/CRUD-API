@@ -26,7 +26,7 @@ public class SignupController {
             @Valid @RequestBody SignupRequestDto dto,
             HttpServletRequest req,
             HttpServletResponse res) {
-        String userId = userSignupService.registerUser(dto);
+        Long userId = userSignupService.registerUser(dto);
 
         sessionAndCookieCheckingService.remember(req, res, userId);
 

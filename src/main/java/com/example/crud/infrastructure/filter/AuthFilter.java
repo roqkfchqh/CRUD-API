@@ -33,7 +33,7 @@ public class AuthFilter implements Filter {
             for(Cookie cookie : cookies){
                 if("rememberMe".equals(cookie.getName())){
                     String email = cookie.getValue();
-                    Long userId = Objects.requireNonNull(userService).getUserByEmail(email).getId();
+                    Long userId = Objects.requireNonNull(userService).getIdByEmail(email);
                     if(userId != null){
                         req.getSession().setAttribute("userId", userId);
                     }

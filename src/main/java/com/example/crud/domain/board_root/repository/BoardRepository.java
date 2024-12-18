@@ -13,4 +13,8 @@ public interface BoardRepository extends JpaRepository<Board, Long>, BoardReposi
     Page<Board> findByTitleContaining(String title, Pageable pageable);
 
     void deleteByUserId(Long userId);
+
+    String findPasswordById(Long id);
+
+
 }

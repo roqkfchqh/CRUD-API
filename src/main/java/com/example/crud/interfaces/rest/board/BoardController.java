@@ -27,7 +27,7 @@ public class BoardController {
     public ResponseEntity<BoardResponseDto> createPost(
             HttpServletRequest req,
             @Valid @RequestBody BoardRequestDto dto){
-        String sessionUserId = (String) req.getSession().getAttribute("userId");
+        Long sessionUserId = (Long) req.getSession().getAttribute("userId");
 
         BoardResponseDto board = sessionCheckingService.CreatePost(sessionUserId, dto);
 
@@ -47,7 +47,7 @@ public class BoardController {
             HttpServletRequest req,
             @PathVariable Long id,
             @Valid @RequestBody BoardRequestDto dto){
-        String sessionUserId = (String) req.getSession().getAttribute("userId");
+        Long sessionUserId = (Long) req.getSession().getAttribute("userId");
 
         BoardResponseDto board = sessionCheckingService.UpdatePost(sessionUserId, id, dto);
 
@@ -64,7 +64,7 @@ public class BoardController {
             HttpServletRequest req,
             @PathVariable Long id,
             @Valid @RequestBody(required = false) BoardPasswordRequestDto dto){
-        String sessionUserId = (String) req.getSession().getAttribute("userId");
+        Long sessionUserId = (Long) req.getSession().getAttribute("userId");
 
         sessionCheckingService.DeletePost(sessionUserId, id, dto);
 

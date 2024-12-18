@@ -7,6 +7,8 @@ import com.example.crud.application.dto.board.BoardResponseDto;
 import com.example.crud.application.dto.comment.CommentPasswordRequestDto;
 import com.example.crud.application.dto.comment.CommentRequestDto;
 import com.example.crud.application.dto.comment.CommentResponseDto;
+import com.example.crud.application.exception.CustomException;
+import com.example.crud.application.exception.errorcode.ErrorCode;
 import com.example.crud.application.mapper.BoardMapper;
 import com.example.crud.application.mapper.CommentMapper;
 import com.example.crud.domain.board_root.aggregate.Board;
@@ -21,7 +23,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class BoardAnonymousService extends AbstractBoardService {
 
@@ -31,23 +32,12 @@ public class BoardAnonymousService extends AbstractBoardService {
     private final CommentRepository commentRepository;
     private final BoardDomainService boardDomainService;
 
-    @Override
-    protected void validateUser(Object userInfo){
-        BoardRequestDto dto = (BoardRequestDto) userInfo;
-        boardValidationService.validateAnonymousUser(dto.getNickname(), dto.getPassword());
-    }
-
-    @Override
-    protected void validateUserForDelete(Object userInfo, Long id){
-        BoardPasswordRequestDto dto = (BoardPasswordRequestDto) userInfo;
-        boardValidationService.validateBoardPassword(id, dto.getPassword());
-    }
-
     //createPost
     @Override
+    @Transactional
     protected BoardResponseDto executeCreatePost(BoardRequestDto dto, Object userInfo){
         String encodedPassword = passwordEncoder.encode(dto.getPassword());
-        Board board = boardDomainService.createAnonymousBoard(dto.getTitle(), dto.getContent(), Category.valueOf(dto.getCategory()), dto.getNickname(), encodedPassword);
+        Board board = Board.createAnonymous(dto.getTitle(), dto.getContent(), Category.valueOf(dto.getCategory()), dto.getNickname(), encodedPassword);
 
         boardRepository.save(board);
         return BoardMapper.toDto(board);
@@ -55,10 +45,14 @@ public class BoardAnonymousService extends AbstractBoardService {
 
     //updatePost
     @Override
+    @Transactional
     protected BoardResponseDto executeUpdatePost(BoardRequestDto dto, Long id){
-        Board board = boardValidationService.validateBoardPassword(id, dto.getPassword());
 
-        boardDomainService.updateBoard(board, dto.getTitle(), dto.getContent(), Category.valueOf(dto.getCategory()));
+        Board board = boardRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.CONTENT_NOT_FOUND));
+
+        board.update(dto.getTitle(), dto.getContent(), Category.valueOf(dto.getCategory()));
+
         boardRepository.save(board);
         return BoardMapper.toDto(board);
     }
@@ -70,10 +64,13 @@ public class BoardAnonymousService extends AbstractBoardService {
     }
 
     //createComment
+    @Transactional
     public CommentResponseDto createCommentForAnonymous(CommentRequestDto dto){
         boardValidationService.validateAnonymousUser(dto.getNickname(), dto.getPassword());
         String encodedPassword = passwordEncoder.encode(dto.getPassword());
-        Board board = boardValidationService.validateBoard(dto.getBoardId());
+
+        Board board = boardRepository.findById(dto.getBoardId())
+                .orElseThrow(() -> new CustomException(ErrorCode.CONTENT_NOT_FOUND));
 
         Comment comment = boardDomainService.createAnonymousComment(dto.getNickname(), dto.getContent(), board, encodedPassword);
 
@@ -83,14 +80,37 @@ public class BoardAnonymousService extends AbstractBoardService {
     }
 
     //deleteComment
+    @Transactional
     public void deleteCommentForAnonymous(Long commentId, CommentPasswordRequestDto dto){
         boardValidationService.validateCommentPassword(commentId, dto.getPassword());
 
-        Board board = boardValidationService.validateBoard(dto.getBoardId());
-        Comment comment = boardValidationService.validateComment(commentId, board);
+        Board board = boardRepository.findById(dto.getBoardId())
+                .orElseThrow(() -> new CustomException(ErrorCode.CONTENT_NOT_FOUND));
 
-        boardDomainService.removeComment(board, comment);
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
+
+        board.removeComment(comment);
         commentRepository.deleteById(commentId);
         boardRepository.save(board);
+    }
+
+    @Override
+    protected void validateUser(Object userInfo){
+        BoardRequestDto dto = (BoardRequestDto) userInfo;
+        boardValidationService.validateAnonymousUser(dto.getNickname(), dto.getPassword());
+    }
+
+    @Override
+    protected void validateUserForUpdate(Object userInfo, Long id){
+        BoardRequestDto dto = (BoardRequestDto) userInfo;
+        boardValidationService.validateBoardPassword(id, dto.getPassword());
+        boardValidationService.validateAnonymousUser(dto.getNickname(), dto.getPassword());
+    }
+
+    @Override
+    protected void validateUserForDelete(Object userInfo, Long id){
+        BoardPasswordRequestDto dto = (BoardPasswordRequestDto) userInfo;
+        boardValidationService.validateBoardPassword(id, dto.getPassword());
     }
 }

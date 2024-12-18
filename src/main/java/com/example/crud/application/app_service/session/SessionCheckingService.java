@@ -19,7 +19,7 @@ public class SessionCheckingService {
     private final BoardAnonymousService boardAnonymousService;
 
     public BoardResponseDto CreatePost(
-            String userId,
+            Long userId,
             BoardRequestDto dto){
 
         BoardResponseDto board;
@@ -33,7 +33,7 @@ public class SessionCheckingService {
     }
 
     public BoardResponseDto UpdatePost(
-            String userId,
+            Long userId,
             Long id,
             BoardRequestDto dto){
 
@@ -48,7 +48,7 @@ public class SessionCheckingService {
     }
 
     public void DeletePost(
-            String userId,
+            Long userId,
             Long id,
             BoardPasswordRequestDto dto){
 
@@ -60,7 +60,7 @@ public class SessionCheckingService {
     }
 
     public CommentResponseDto CreateComment(
-            String userId,
+            Long userId,
             CommentRequestDto dto){
 
         CommentResponseDto comment;
@@ -74,7 +74,7 @@ public class SessionCheckingService {
     }
 
     public void DeleteComment(
-            String userId,
+            Long userId,
             Long id,
             CommentPasswordRequestDto dto){
 

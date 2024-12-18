@@ -20,12 +20,12 @@ public class UserSignupService {
     private final UserDomainService userDomainService;
     private final PasswordEncoder passwordEncoder;
 
-    public String registerUser(SignupRequestDto dto){
+    public Long registerUser(SignupRequestDto dto){
         userValidationService.isEmailTaken(dto.getEmail());
         String encodedPassword = passwordEncoder.encode(dto.getPassword());
 
-        User user = userDomainService.createUser(dto.getName(), dto.getEmail(), encodedPassword);
+        User user = User.create(dto.getName(), dto.getEmail(), encodedPassword);
         userRepository.save(user);
-        return user;
+        return user.getId();
     }
 }

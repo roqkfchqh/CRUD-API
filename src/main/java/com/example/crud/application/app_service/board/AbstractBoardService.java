@@ -13,7 +13,7 @@ public abstract class AbstractBoardService {
     }
 
     public final BoardResponseDto updatePost(BoardRequestDto dto, Object userInfo, Long id){
-        validateUser(userInfo);
+        validateUserForUpdate(userInfo, id);
         return executeUpdatePost(dto, id);
     }
 
@@ -23,6 +23,8 @@ public abstract class AbstractBoardService {
     }
 
     protected abstract void validateUser(Object userInfo);
+
+    protected abstract void validateUserForUpdate(Object userInfo, Long id);
 
     protected abstract void validateUserForDelete(Object userInfo, Long id);
 

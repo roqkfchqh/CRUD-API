@@ -6,30 +6,35 @@ import com.example.crud.domain.user_root.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class UserValidationService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public void validateUser(String userId) {
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+    public void validateUser(Long userId) {
         if(userId == null){
             throw new CustomException(ErrorCode.LOGIN_REQUIRED);
         }
-
-        userRepository.findById(Long.valueOf(userId)).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
 
-    public void validatePassword(String sessionPassword, String inputPassword){
-        if(!passwordEncoder.matches(inputPassword, sessionPassword)){
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+    public void validatePassword(Long id, String inputPassword){
+        String userPassword = userRepository.findPasswordById(id);
+
+        if(!passwordEncoder.matches(inputPassword, userPassword)){
             throw new CustomException(ErrorCode.WRONG_PASSWORD);
         }
     }
 
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public void isEmailTaken(String email){
         if(userRepository.findByEmail(email).isPresent()){
             throw new CustomException(ErrorCode.ALREADY_USED_EMAIL);

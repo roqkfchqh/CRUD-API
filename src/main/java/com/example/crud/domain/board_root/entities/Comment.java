@@ -10,9 +10,11 @@ import lombok.*;
 
 import java.util.List;
 
+import static lombok.AccessLevel.PRIVATE;
+
 @Entity
 @NoArgsConstructor
-@AllArgsConstructor
+@AllArgsConstructor(access = PRIVATE)
 @Getter
 @Setter
 @Builder

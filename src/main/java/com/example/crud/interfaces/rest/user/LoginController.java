@@ -27,7 +27,7 @@ public class LoginController {
             @RequestBody LoginRequestDto dto,
             HttpServletRequest req,
             HttpServletResponse res){
-        String userId = userLoginService.loginUser(dto);
+        Long userId = userLoginService.loginUser(dto);
         if(userId != null) {
             sessionAndCookieCheckingService.remember(req, res, userId);
 

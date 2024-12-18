@@ -8,11 +8,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class SessionAndCookieCheckingService {
 
-    public void remember(HttpServletRequest req, HttpServletResponse res, String userId) {
+    public void remember(HttpServletRequest req, HttpServletResponse res, Long userId) {
         req.getSession().setAttribute("userId", userId);
         req.getSession().setMaxInactiveInterval(1800);
 
-        Cookie rememberMeCookie = new Cookie("rememberMe", userId);
+        Cookie rememberMeCookie = new Cookie("rememberMe", String.valueOf(userId));
         rememberMeCookie.setSecure(true);
         rememberMeCookie.setHttpOnly(true);
         rememberMeCookie.setMaxAge(7 * 24 * 60 * 60);   //7일

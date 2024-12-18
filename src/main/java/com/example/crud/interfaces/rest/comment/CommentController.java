@@ -21,7 +21,7 @@ public class CommentController {
             HttpServletRequest req,
             @RequestBody CommentRequestDto dto){
 
-        String sessionUserId = (String) req.getSession().getAttribute("userId");
+        Long sessionUserId = (Long) req.getSession().getAttribute("userId");
 
         CommentResponseDto comment = sessionCheckingService.CreateComment(sessionUserId, dto);
         return ResponseEntity.ok(comment);
@@ -33,7 +33,7 @@ public class CommentController {
             @PathVariable Long id,
             @RequestBody CommentPasswordRequestDto dto){
 
-        String sessionUserId = (String) req.getSession().getAttribute("userId");
+        Long sessionUserId = (Long) req.getSession().getAttribute("userId");
 
         sessionCheckingService.DeleteComment(sessionUserId, id, dto);
         return ResponseEntity.noContent().build();
