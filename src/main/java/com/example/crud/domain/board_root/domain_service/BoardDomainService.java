@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class BoardDomainService {
 
-    public Comment createComment(String nickname, String content, Board board){
-        Comment comment = Comment.create(nickname, content, board);
+    public Comment createComment(Long userId, String nickname, String content, Board board){
+        Comment comment = Comment.create(userId, nickname, content, board);
         board.addComment(comment);
         return comment;
     }

@@ -10,6 +10,7 @@ import lombok.*;
 public class CommentRequestDto {
 
     private Long boardId;
+    //private Long parentCommentId;
 
     @NotBlank(message = "내용을 입력해주세요.")
     @Size(max = 100, message = "너무길자나지금")

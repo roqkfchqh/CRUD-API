@@ -54,6 +54,7 @@ public class Comment extends DateTimeEntity {
 
     public static Comment create(String nickname, String content, Board board) {
         return Comment.builder()
+                .user_id()
                 .nickname(nickname)
                 .content(content)
                 .board(board)

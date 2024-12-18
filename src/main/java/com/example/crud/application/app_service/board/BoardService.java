@@ -18,6 +18,7 @@ import com.example.crud.domain.board_root.entities.Comment;
 import com.example.crud.domain.board_root.repository.BoardRepository;
 import com.example.crud.domain.board_root.repository.CommentRepository;
 import com.example.crud.domain.board_root.valueobjects.Category;
+import com.example.crud.domain.user_root.aggregate.User;
 import com.example.crud.domain.user_root.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -108,9 +109,10 @@ public class BoardService extends AbstractBoardService {
     public CommentResponseDto createComment(Long userId, CommentRequestDto dto) {
         Board board = boardRepository.findById(dto.getBoardId())
                 .orElseThrow(() -> new CustomException(ErrorCode.CONTENT_NOT_FOUND));
-        String username = userRepository.findNameById(userId);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        Comment comment = boardDomainService.createComment(username, dto.getContent(), board);
+        Comment comment = boardDomainService.createComment(user.getId(), user.getName(), dto.getContent(), board);
 
         commentRepository.save(comment);
         boardRepository.save(board);
@@ -119,7 +121,9 @@ public class BoardService extends AbstractBoardService {
 
     //deleteComment
     @Transactional
-    public void deleteComment(CommentPasswordRequestDto dto, Long commentId) {
+    public void deleteComment(CommentPasswordRequestDto dto, Long commentId, Long userId) {
+        userValidationService.validateUser(userId);
+
         Board board = boardRepository.findById(dto.getBoardId())
                 .orElseThrow(() -> new CustomException(ErrorCode.CONTENT_NOT_FOUND));
 

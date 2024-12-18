@@ -81,7 +81,7 @@ public class SessionCheckingService {
         if(userId == null){
             boardAnonymousService.deleteCommentForAnonymous(id, dto);
         }else{
-            boardService.deleteComment(dto, id);
+            boardService.deleteComment(dto, id, userId);
         }
     }
 }
