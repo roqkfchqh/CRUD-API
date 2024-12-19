@@ -60,6 +60,12 @@ public class Board extends DateTimeEntity {
     @Builder.Default
     private List<Comment> comments = new ArrayList<>();
 
+    public void update(String title, String content, Category category) {
+        this.title = title;
+        this.content = content;
+        this.category = category;
+    }
+
     public void updateLiked() {
         this.liked ++;
     }
@@ -78,29 +84,35 @@ public class Board extends DateTimeEntity {
         comment.setBoard(null);
     }
 
-    public static Board create(String title, String content, Category category, String nickname) {
-        return Board.builder()
-                .title(title)
-                .content(content)
-                .category(category)
-                .nickname(nickname)
-                .build();
+    public static Board create(String title, String content, Category category, String nickname){
+        return new Board(
+                title,
+                content,
+                category,
+                nickname);
     }
 
-    public static Board createAnonymous(String title, String content, Category category, String nickname, String password) {
-        return Board.builder()
-                .title(title)
-                .content(content)
-                .category(category)
-                .nickname(nickname)
-                .password(password)
-                .build();
+    public static Board create(String title, String content, Category category, String nickname, String password){
+        return new Board(
+                title,
+                content,
+                category,
+                nickname,
+                password);
     }
 
-    public void update(String title, String content, Category category) {
+    private Board(String title, String content, Category category, String nickname){
         this.title = title;
         this.content = content;
         this.category = category;
+        this.nickname = nickname;
     }
 
+    private Board(String title, String content, Category category, String nickname, String password){
+        this.title = title;
+        this.content = content;
+        this.category = category;
+        this.nickname = nickname;
+        this.password = password;
+    }
 }

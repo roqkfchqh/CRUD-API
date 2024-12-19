@@ -15,7 +15,7 @@ public class BoardDomainService {
     }
 
     public Comment createAnonymousComment(String nickname, String content, Board board, String password){
-        Comment comment = Comment.createAnonymous(nickname, content, board, password);
+        Comment comment = Comment.create(nickname, content, board, password);
         board.addComment(comment);
         return comment;
     }

@@ -37,7 +37,7 @@ public class BoardAnonymousService extends AbstractBoardService {
     @Transactional
     protected BoardResponseDto executeCreatePost(BoardRequestDto dto, Object userInfo){
         String encodedPassword = passwordEncoder.encode(dto.getPassword());
-        Board board = Board.createAnonymous(dto.getTitle(), dto.getContent(), Category.valueOf(dto.getCategory()), dto.getNickname(), encodedPassword);
+        Board board = Board.create(dto.getTitle(), dto.getContent(), Category.valueOf(dto.getCategory()), dto.getNickname(), encodedPassword);
 
         boardRepository.save(board);
         return BoardMapper.toDto(board);
@@ -48,8 +48,7 @@ public class BoardAnonymousService extends AbstractBoardService {
     @Transactional
     protected BoardResponseDto executeUpdatePost(BoardRequestDto dto, Long id){
 
-        Board board = boardRepository.findById(id)
-                .orElseThrow(() -> new CustomException(ErrorCode.CONTENT_NOT_FOUND));
+        Board board = getBoard(id);
 
         board.update(dto.getTitle(), dto.getContent(), Category.valueOf(dto.getCategory()));
 
@@ -69,8 +68,7 @@ public class BoardAnonymousService extends AbstractBoardService {
         boardValidationService.validateAnonymousUser(dto.getNickname(), dto.getPassword());
         String encodedPassword = passwordEncoder.encode(dto.getPassword());
 
-        Board board = boardRepository.findById(dto.getBoardId())
-                .orElseThrow(() -> new CustomException(ErrorCode.CONTENT_NOT_FOUND));
+        Board board = getBoard(dto.getBoardId());
 
         Comment comment = boardDomainService.createAnonymousComment(dto.getNickname(), dto.getContent(), board, encodedPassword);
 
@@ -84,8 +82,7 @@ public class BoardAnonymousService extends AbstractBoardService {
     public void deleteCommentForAnonymous(Long commentId, CommentPasswordRequestDto dto){
         boardValidationService.validateCommentPassword(commentId, dto.getPassword());
 
-        Board board = boardRepository.findById(dto.getBoardId())
-                .orElseThrow(() -> new CustomException(ErrorCode.CONTENT_NOT_FOUND));
+        Board board = getBoard(dto.getBoardId());
 
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
@@ -111,5 +108,10 @@ public class BoardAnonymousService extends AbstractBoardService {
     protected void validateUserForDelete(Object userInfo, Long id){
         BoardPasswordRequestDto dto = (BoardPasswordRequestDto) userInfo;
         boardValidationService.validateBoardPassword(id, dto.getPassword());
+    }
+
+    private Board getBoard(Long id) {
+        return boardRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.CONTENT_NOT_FOUND));
     }
 }

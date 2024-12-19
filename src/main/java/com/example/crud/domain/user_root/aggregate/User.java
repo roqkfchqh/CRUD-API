@@ -31,11 +31,10 @@ public class User extends DateTimeEntity {
     private String password;
 
     public static User create(String name, String email, String password) {
-        return User.builder()
-                .name(name)
-                .email(email)
-                .password(password)
-                .build();
+        return new User(
+                name,
+                email,
+                password);
     }
 
     public void update(String name, String password){
@@ -47,5 +46,9 @@ public class User extends DateTimeEntity {
         }
     }
 
-
+    private User(String name, String email, String password) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+    }
 }

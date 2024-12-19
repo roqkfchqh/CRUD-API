@@ -53,21 +53,32 @@ public class Comment extends DateTimeEntity {
     private List<Comment> childComment;
 
     public static Comment create(User user, String nickname, String content, Board board) {
-        return Comment.builder()
-                .user(user)
-                .nickname(nickname)
-                .content(content)
-                .board(board)
-                .build();
+        return new Comment(
+                user,
+                nickname,
+                content,
+                board);
     }
 
-    public static Comment createAnonymous(String nickname, String content, Board board, String password) {
-        return Comment.builder()
-                .nickname(nickname)
-                .content(content)
-                .board(board)
-                .password(password)
-                .build();
+    public static Comment create(String nickname, String content, Board board, String password) {
+        return new Comment(
+                nickname,
+                content,
+                board,
+                password);
     }
 
+    private Comment(User user, String nickname, String content, Board board) {
+        this.user = user;
+        this.nickname = nickname;
+        this.content = content;
+        this.board = board;
+    }
+
+    private Comment(String nickname, String content, Board board, String password) {
+        this.nickname = nickname;
+        this.content = content;
+        this.board = board;
+        this.password = password;
+    }
 }

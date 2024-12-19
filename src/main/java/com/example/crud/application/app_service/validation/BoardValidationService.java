@@ -18,26 +18,22 @@ public class BoardValidationService {
     private final PasswordEncoder passwordEncoder;
     private final CommentRepository commentRepository;
 
-    @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public void validateBoard(Long id){
         boardRepository.findById(id)
             .orElseThrow(() -> new CustomException(ErrorCode.CONTENT_NOT_FOUND));
     }
 
-    @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public void validateComment(Long id) {
         commentRepository.findById(id)
             .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
     }
 
-    @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public void validateBoardPassword(Long id, String password){
         if(!passwordEncoder.matches(password, boardRepository.findPasswordById(id))){
             throw new CustomException(ErrorCode.WRONG_PASSWORD);
         }
     }
 
-    @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public void validateCommentPassword(Long id, String password){
         if(!passwordEncoder.matches(password, commentRepository.findPasswordById(id))){
             throw new CustomException(ErrorCode.WRONG_PASSWORD);
