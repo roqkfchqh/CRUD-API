@@ -1,7 +1,7 @@
-package com.example.crud.application.app_service.session;
+package com.example.crud.application.app_service.sessioncheck;
 
-import com.example.crud.application.app_service.board.BoardAnonymousService;
-import com.example.crud.application.app_service.board.BoardService;
+import com.example.crud.application.app_service.board.crud.BoardAnonymousService;
+import com.example.crud.application.app_service.board.crud.BoardUserService;
 import com.example.crud.application.dto.board.AnonymousRequestDto;
 import com.example.crud.application.dto.board.BoardRequestDto;
 import com.example.crud.application.dto.board.BoardResponseDto;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class SessionCheckingService {
 
-    private final BoardService boardService;
+    private final BoardUserService boardUserService;
     private final BoardAnonymousService boardAnonymousService;
 
     public BoardResponseDto CreatePost(
@@ -27,7 +27,7 @@ public class SessionCheckingService {
         if(userId == null){
             board = boardAnonymousService.createPost(dto, anonymous);
         }else{
-            board = boardService.createPost(dto, userId);
+            board = boardUserService.createPost(dto, userId);
         }
         return board;
     }
@@ -43,7 +43,7 @@ public class SessionCheckingService {
         if(userId == null){
             board = boardAnonymousService.updatePost(dto, anonymous, id);
         }else{
-            board = boardService.updatePost(dto, userId, id);
+            board = boardUserService.updatePost(dto, userId, id);
         }
         return board;
     }
@@ -56,7 +56,7 @@ public class SessionCheckingService {
         if(userId == null){
             boardAnonymousService.deletePost(dto, id);
         }else{
-            boardService.deletePost(userId, id);
+            boardUserService.deletePost(userId, id);
         }
     }
 
@@ -71,7 +71,7 @@ public class SessionCheckingService {
         if(userId == null){
             comment = boardAnonymousService.createComment(boardId, dto, anonymous);
         }else{
-            comment = boardService.createComment(boardId, dto, userId);
+            comment = boardUserService.createComment(boardId, dto, userId);
         }
         return comment;
     }
@@ -85,7 +85,7 @@ public class SessionCheckingService {
         if(userId == null){
             boardAnonymousService.deleteComment(boardId, commentId, anonymous);
         }else{
-            boardService.deleteComment(boardId, commentId, userId);
+            boardUserService.deleteComment(boardId, commentId, userId);
         }
     }
 }

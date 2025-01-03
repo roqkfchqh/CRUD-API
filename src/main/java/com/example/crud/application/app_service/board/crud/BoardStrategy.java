@@ -1,4 +1,4 @@
-package com.example.crud.application.app_service.board;
+package com.example.crud.application.app_service.board.crud;
 
 import com.example.crud.application.dto.board.BoardRequestDto;
 import com.example.crud.application.dto.board.BoardResponseDto;

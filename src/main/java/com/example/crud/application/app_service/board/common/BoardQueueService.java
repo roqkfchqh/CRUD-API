@@ -1,4 +1,4 @@
-package com.example.crud.application.app_service.board;
+package com.example.crud.application.app_service.board.common;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;

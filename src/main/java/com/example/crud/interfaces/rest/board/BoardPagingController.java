@@ -1,7 +1,7 @@
 package com.example.crud.interfaces.rest.board;
 
 import com.example.crud.application.dto.board.BoardPagingResponseDto;
-import com.example.crud.application.app_service.board.BoardPagingService;
+import com.example.crud.application.app_service.board.common.BoardPagingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;

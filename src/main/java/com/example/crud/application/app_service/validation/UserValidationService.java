@@ -21,8 +21,9 @@ public class UserValidationService {
         if(userId == null){
             throw new CustomException(ErrorCode.LOGIN_REQUIRED);
         }
-        userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        if(!userRepository.existsById(userId)){
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }
     }
 
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
@@ -34,7 +35,7 @@ public class UserValidationService {
 
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public void isEmailTaken(String email){
-        if(userRepository.findByEmail(email).isPresent()){
+        if(userRepository.existsByEmail(email)){
             throw new CustomException(ErrorCode.ALREADY_USED_EMAIL);
         }
     }

@@ -1,4 +1,4 @@
-package com.example.crud.application.app_service.board;
+package com.example.crud.application.app_service.board.common;
 
 import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Async;

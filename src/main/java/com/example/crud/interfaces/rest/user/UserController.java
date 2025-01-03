@@ -3,7 +3,7 @@ package com.example.crud.interfaces.rest.user;
 import com.example.crud.application.dto.user.CurrentPasswordRequestDto;
 import com.example.crud.application.dto.user.UpdateRequestDto;
 import com.example.crud.application.dto.user.UserResponseDto;
-import com.example.crud.application.app_service.session.SessionAndCookieCheckingService;
+import com.example.crud.application.app_service.sessioncheck.SessionAndCookieCheckingService;
 import com.example.crud.application.app_service.user.UserService;
 import com.example.crud.application.app_service.validation.UserValidationService;
 import jakarta.servlet.http.HttpServletRequest;

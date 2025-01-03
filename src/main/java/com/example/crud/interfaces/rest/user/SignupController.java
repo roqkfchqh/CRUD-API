@@ -1,7 +1,7 @@
 package com.example.crud.interfaces.rest.user;
 
 import com.example.crud.application.dto.user.SignupRequestDto;
-import com.example.crud.application.app_service.session.SessionAndCookieCheckingService;
+import com.example.crud.application.app_service.sessioncheck.SessionAndCookieCheckingService;
 import com.example.crud.application.app_service.user.UserSignupService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

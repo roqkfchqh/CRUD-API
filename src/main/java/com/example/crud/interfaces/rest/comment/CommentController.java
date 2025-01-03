@@ -3,7 +3,7 @@ package com.example.crud.interfaces.rest.comment;
 import com.example.crud.application.dto.board.AnonymousRequestDto;
 import com.example.crud.application.dto.comment.CommentRequestDto;
 import com.example.crud.application.dto.comment.CommentResponseDto;
-import com.example.crud.application.app_service.session.SessionCheckingService;
+import com.example.crud.application.app_service.sessioncheck.SessionCheckingService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

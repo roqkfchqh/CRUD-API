@@ -1,4 +1,4 @@
-package com.example.crud.application.app_service.board;
+package com.example.crud.application.app_service.board.common;
 
 import com.example.crud.application.exception.CustomException;
 import com.example.crud.application.exception.errorcode.ErrorCode;

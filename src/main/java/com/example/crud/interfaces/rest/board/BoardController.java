@@ -1,11 +1,11 @@
 package com.example.crud.interfaces.rest.board;
 
+import com.example.crud.application.app_service.board.common.BoardService;
 import com.example.crud.application.dto.board.AnonymousRequestDto;
 import com.example.crud.application.dto.board.BoardReadResponseDto;
 import com.example.crud.application.dto.board.BoardRequestDto;
 import com.example.crud.application.dto.board.BoardResponseDto;
-import com.example.crud.application.app_service.board.BoardService;
-import com.example.crud.application.app_service.session.SessionCheckingService;
+import com.example.crud.application.app_service.sessioncheck.SessionCheckingService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

@@ -3,7 +3,7 @@ package com.example.crud.interfaces.rest.user;
 import com.example.crud.application.dto.user.LoginRequestDto;
 import com.example.crud.application.exception.CustomException;
 import com.example.crud.application.exception.errorcode.ErrorCode;
-import com.example.crud.application.app_service.session.SessionAndCookieCheckingService;
+import com.example.crud.application.app_service.sessioncheck.SessionAndCookieCheckingService;
 import com.example.crud.application.app_service.user.UserLoginService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

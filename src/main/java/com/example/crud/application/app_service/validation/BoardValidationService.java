@@ -7,8 +7,6 @@ import com.example.crud.domain.board_root.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -18,14 +16,16 @@ public class BoardValidationService {
     private final PasswordEncoder passwordEncoder;
     private final CommentRepository commentRepository;
 
-    public void validateBoard(Long id){
-        boardRepository.findById(id)
-            .orElseThrow(() -> new CustomException(ErrorCode.CONTENT_NOT_FOUND));
+    public void validateBoard(Long boardId){
+        if(!boardRepository.existsById(boardId)){
+            throw new CustomException(ErrorCode.CONTENT_NOT_FOUND);
+        }
     }
 
-    public void validateComment(Long id) {
-        commentRepository.findById(id)
-            .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
+    public void validateComment(Long commentId) {
+        if(!commentRepository.existsById(commentId)){
+            throw new CustomException(ErrorCode.COMMENT_NOT_FOUND);
+        }
     }
 
     public void validateBoardPassword(Long id, String password){

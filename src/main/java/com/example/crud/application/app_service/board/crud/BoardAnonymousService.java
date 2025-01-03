@@ -1,6 +1,6 @@
-package com.example.crud.application.app_service.board;
+package com.example.crud.application.app_service.board.crud;
 
-import com.example.crud.application.dto.board.BoardReadResponseDto;
+import com.example.crud.application.dto.board.AnonymousRequestDto;
 import com.example.crud.application.dto.board.BoardRequestDto;
 import com.example.crud.application.dto.board.BoardResponseDto;
 import com.example.crud.application.dto.comment.CommentRequestDto;
@@ -15,63 +15,62 @@ import com.example.crud.domain.board_root.entities.Comment;
 import com.example.crud.domain.board_root.repository.BoardRepository;
 import com.example.crud.domain.board_root.repository.CommentRepository;
 import com.example.crud.domain.board_root.valueobjects.Category;
-import com.example.crud.domain.user_root.aggregate.User;
-import com.example.crud.domain.user_root.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
-public class BoardService implements BoardStrategy<Long>{
+public class BoardAnonymousService implements BoardStrategy<AnonymousRequestDto> {
 
     private final BoardRepository boardRepository;
+    private final PasswordEncoder passwordEncoder;
     private final CommentRepository commentRepository;
-    private final BoardAsyncService boardAsyncService;
-    private final BoardPagingService boardPagingService;
     private final BoardDomainService boardDomainService;
-    private final UserRepository userRepository;
 
     @Override
-    public BoardResponseDto createPost(BoardRequestDto dto, Long userInfo) {
-        String userName = userRepository.findNameById(userInfo);
-        Board board = Board.create(dto.getTitle(), dto.getContent(), Category.valueOf(dto.getCategory()), userName);
+    @Transactional
+    public BoardResponseDto createPost(BoardRequestDto dto, AnonymousRequestDto userInfo) {
+        String encodedPassword = passwordEncoder.encode(userInfo.getPassword());
+        Board board = Board.create(dto.getTitle(), dto.getContent(), Category.valueOf(dto.getCategory()), userInfo.getNickname(), encodedPassword);
         boardRepository.save(board);
         return BoardMapper.toDto(board);
     }
 
     @Override
-    public BoardResponseDto updatePost(BoardRequestDto dto, Long userInfo, Long id) {
+    @Transactional
+    public BoardResponseDto updatePost(BoardRequestDto dto, AnonymousRequestDto userInfo, Long id) {
         Board board = getBoard(id);
 
         board.update(dto.getTitle(), dto.getContent(), Category.valueOf(dto.getCategory()));
 
+        boardRepository.save(board);
         return BoardMapper.toDto(board);
     }
 
     @Override
-    public void deletePost(Long userInfo, Long id) {
+    public void deletePost(AnonymousRequestDto userInfo, Long id) {
         boardRepository.deleteById(id);
     }
 
     @Override
     @Transactional
-    public CommentResponseDto createComment(Long boardId, CommentRequestDto dto, Long userInfo) {
-        Board board = getBoard(boardId);
-        User user = userRepository.findById(userInfo)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+    public CommentResponseDto createComment(Long boardId, CommentRequestDto dto, AnonymousRequestDto userInfo) {
+        String encodedPassword = passwordEncoder.encode(userInfo.getPassword());
 
-        Comment comment = boardDomainService.createComment(user, user.getName(), dto.getContent(), board);
+        Board board = getBoard(boardId);
+
+        Comment comment = boardDomainService.createAnonymousComment(userInfo.getNickname(), dto.getContent(), board, encodedPassword);
 
         commentRepository.save(comment);
+        boardRepository.save(board);
         return CommentMapper.toDto(comment);
     }
 
     @Override
     @Transactional
-    public void deleteComment(Long boardId, Long commentId, Long userInfo) {
+    public void deleteComment(Long boardId, Long commentId, AnonymousRequestDto userInfo) {
 
         Board board = getBoard(boardId);
 
@@ -80,24 +79,7 @@ public class BoardService implements BoardStrategy<Long>{
 
         board.removeComment(comment);
         commentRepository.deleteById(commentId);
-    }
-
-    //readPost
-    public BoardReadResponseDto readPost(Long id, int page, int size){
-        Board board = getBoard(id);
-        boardAsyncService.updateViewCountAsync(id);
-
-        Page<CommentResponseDto> comments = boardPagingService.pagingComments(id, page, size);
-        return BoardMapper.toReadDto(board, comments);
-    }
-
-    //likePost
-    @Transactional
-    public BoardResponseDto likePost(Long id) {
-        Board board = getBoard(id);
-
-        board.updateLiked();
-        return BoardMapper.toDto(board);
+        boardRepository.save(board);
     }
 
     //helper
