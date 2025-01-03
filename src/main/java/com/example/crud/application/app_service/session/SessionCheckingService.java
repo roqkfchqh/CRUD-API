@@ -2,10 +2,9 @@ package com.example.crud.application.app_service.session;
 
 import com.example.crud.application.app_service.board.BoardAnonymousService;
 import com.example.crud.application.app_service.board.BoardService;
-import com.example.crud.application.dto.board.BoardPasswordRequestDto;
+import com.example.crud.application.dto.board.AnonymousRequestDto;
 import com.example.crud.application.dto.board.BoardRequestDto;
 import com.example.crud.application.dto.board.BoardResponseDto;
-import com.example.crud.application.dto.comment.CommentPasswordRequestDto;
 import com.example.crud.application.dto.comment.CommentRequestDto;
 import com.example.crud.application.dto.comment.CommentResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -20,12 +19,13 @@ public class SessionCheckingService {
 
     public BoardResponseDto CreatePost(
             Long userId,
-            BoardRequestDto dto){
+            BoardRequestDto dto,
+            AnonymousRequestDto anonymous){
 
         BoardResponseDto board;
 
         if(userId == null){
-            board = boardAnonymousService.createPost(dto, dto);
+            board = boardAnonymousService.createPost(dto, anonymous);
         }else{
             board = boardService.createPost(dto, userId);
         }
@@ -35,12 +35,13 @@ public class SessionCheckingService {
     public BoardResponseDto UpdatePost(
             Long userId,
             Long id,
-            BoardRequestDto dto){
+            BoardRequestDto dto,
+            AnonymousRequestDto anonymous){
 
         BoardResponseDto board;
 
         if(userId == null){
-            board = boardAnonymousService.updatePost(dto, dto, id);
+            board = boardAnonymousService.updatePost(dto, anonymous, id);
         }else{
             board = boardService.updatePost(dto, userId, id);
         }
@@ -50,7 +51,7 @@ public class SessionCheckingService {
     public void DeletePost(
             Long userId,
             Long id,
-            BoardPasswordRequestDto dto){
+            AnonymousRequestDto dto){
 
         if(userId == null){
             boardAnonymousService.deletePost(dto, id);
@@ -60,28 +61,31 @@ public class SessionCheckingService {
     }
 
     public CommentResponseDto CreateComment(
+            Long boardId,
             Long userId,
-            CommentRequestDto dto){
+            CommentRequestDto dto,
+            AnonymousRequestDto anonymous){
 
         CommentResponseDto comment;
 
         if(userId == null){
-            comment = boardAnonymousService.createCommentForAnonymous(dto);
+            comment = boardAnonymousService.createComment(boardId, dto, anonymous);
         }else{
-            comment = boardService.createComment(userId, dto);
+            comment = boardService.createComment(boardId, dto, userId);
         }
         return comment;
     }
 
     public void DeleteComment(
+            Long boardId,
             Long userId,
-            Long id,
-            CommentPasswordRequestDto dto){
+            Long commentId,
+            AnonymousRequestDto anonymous){
 
         if(userId == null){
-            boardAnonymousService.deleteCommentForAnonymous(id, dto);
+            boardAnonymousService.deleteComment(boardId, commentId, anonymous);
         }else{
-            boardService.deleteComment(dto, id, userId);
+            boardService.deleteComment(boardId, commentId, userId);
         }
     }
 }

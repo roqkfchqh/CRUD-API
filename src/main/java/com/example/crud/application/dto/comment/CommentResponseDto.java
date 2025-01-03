@@ -4,28 +4,27 @@ import com.example.crud.domain.board_root.entities.Comment;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Builder
 @AllArgsConstructor
+@Getter
 public class CommentResponseDto {
     private Long id;
     private String content;
     private String nickname;
     private Long bigCommentId;
-    private List<CommentResponseDto> smallComment;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
 
-    private CommentResponseDto(Comment comment, List<CommentResponseDto> smallCommentDto){
+    private CommentResponseDto(Comment comment){
         this.id = comment.getId();
         this.nickname = comment.getNickname();
         this.content = comment.getContent();
         this.createdAt = comment.getCreatedAt();
         this.bigCommentId = comment.getParentsComment() != null ? comment.getParentsComment().getId() : null;
-        this.smallComment = smallCommentDto;
     }
 }

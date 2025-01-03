@@ -1,10 +1,8 @@
 package com.example.crud.application.app_service.board;
 
-import com.example.crud.application.app_service.validation.BoardValidationService;
-import com.example.crud.application.dto.board.BoardPasswordRequestDto;
+import com.example.crud.application.dto.board.AnonymousRequestDto;
 import com.example.crud.application.dto.board.BoardRequestDto;
 import com.example.crud.application.dto.board.BoardResponseDto;
-import com.example.crud.application.dto.comment.CommentPasswordRequestDto;
 import com.example.crud.application.dto.comment.CommentRequestDto;
 import com.example.crud.application.dto.comment.CommentResponseDto;
 import com.example.crud.application.exception.CustomException;
@@ -24,30 +22,25 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class BoardAnonymousService extends AbstractBoardService {
+public class BoardAnonymousService implements BoardStrategy<AnonymousRequestDto> {
 
     private final BoardRepository boardRepository;
     private final PasswordEncoder passwordEncoder;
-    private final BoardValidationService boardValidationService;
     private final CommentRepository commentRepository;
     private final BoardDomainService boardDomainService;
 
-    //createPost
     @Override
     @Transactional
-    protected BoardResponseDto executeCreatePost(BoardRequestDto dto, Object userInfo){
-        String encodedPassword = passwordEncoder.encode(dto.getPassword());
-        Board board = Board.create(dto.getTitle(), dto.getContent(), Category.valueOf(dto.getCategory()), dto.getNickname(), encodedPassword);
-
+    public BoardResponseDto createPost(BoardRequestDto dto, AnonymousRequestDto userInfo) {
+        String encodedPassword = passwordEncoder.encode(userInfo.getPassword());
+        Board board = Board.create(dto.getTitle(), dto.getContent(), Category.valueOf(dto.getCategory()), userInfo.getNickname(), encodedPassword);
         boardRepository.save(board);
         return BoardMapper.toDto(board);
     }
 
-    //updatePost
     @Override
     @Transactional
-    protected BoardResponseDto executeUpdatePost(BoardRequestDto dto, Long id){
-
+    public BoardResponseDto updatePost(BoardRequestDto dto, AnonymousRequestDto userInfo, Long id) {
         Board board = getBoard(id);
 
         board.update(dto.getTitle(), dto.getContent(), Category.valueOf(dto.getCategory()));
@@ -56,33 +49,30 @@ public class BoardAnonymousService extends AbstractBoardService {
         return BoardMapper.toDto(board);
     }
 
-    //deletePost
     @Override
-    protected void executeDeletePost(Long id){
+    public void deletePost(AnonymousRequestDto userInfo, Long id) {
         boardRepository.deleteById(id);
     }
 
-    //createComment
+    @Override
     @Transactional
-    public CommentResponseDto createCommentForAnonymous(CommentRequestDto dto){
-        boardValidationService.validateAnonymousUser(dto.getNickname(), dto.getPassword());
-        String encodedPassword = passwordEncoder.encode(dto.getPassword());
+    public CommentResponseDto createComment(Long boardId, CommentRequestDto dto, AnonymousRequestDto userInfo) {
+        String encodedPassword = passwordEncoder.encode(userInfo.getPassword());
 
-        Board board = getBoard(dto.getBoardId());
+        Board board = getBoard(boardId);
 
-        Comment comment = boardDomainService.createAnonymousComment(dto.getNickname(), dto.getContent(), board, encodedPassword);
+        Comment comment = boardDomainService.createAnonymousComment(userInfo.getNickname(), dto.getContent(), board, encodedPassword);
 
         commentRepository.save(comment);
         boardRepository.save(board);
         return CommentMapper.toDto(comment);
     }
 
-    //deleteComment
+    @Override
     @Transactional
-    public void deleteCommentForAnonymous(Long commentId, CommentPasswordRequestDto dto){
-        boardValidationService.validateCommentPassword(commentId, dto.getPassword());
+    public void deleteComment(Long boardId, Long commentId, AnonymousRequestDto userInfo) {
 
-        Board board = getBoard(dto.getBoardId());
+        Board board = getBoard(boardId);
 
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
@@ -92,24 +82,7 @@ public class BoardAnonymousService extends AbstractBoardService {
         boardRepository.save(board);
     }
 
-    @Override
-    protected void validateUser(Object userInfo){
-        BoardRequestDto dto = (BoardRequestDto) userInfo;
-        boardValidationService.validateAnonymousUser(dto.getNickname(), dto.getPassword());
-    }
-
-    @Override
-    protected void validateUserForUpdate(Object userInfo, Long id){
-        BoardRequestDto dto = (BoardRequestDto) userInfo;
-        boardValidationService.validateBoardPassword(id, dto.getPassword());
-    }
-
-    @Override
-    protected void validateUserForDelete(Object userInfo, Long id){
-        BoardPasswordRequestDto dto = (BoardPasswordRequestDto) userInfo;
-        boardValidationService.validateBoardPassword(id, dto.getPassword());
-    }
-
+    //helper
     private Board getBoard(Long id) {
         return boardRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.CONTENT_NOT_FOUND));

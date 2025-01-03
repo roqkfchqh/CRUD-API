@@ -1,6 +1,6 @@
 package com.example.crud.interfaces.rest.board;
 
-import com.example.crud.application.dto.board.BoardPasswordRequestDto;
+import com.example.crud.application.dto.board.AnonymousRequestDto;
 import com.example.crud.application.dto.board.BoardReadResponseDto;
 import com.example.crud.application.dto.board.BoardRequestDto;
 import com.example.crud.application.dto.board.BoardResponseDto;
@@ -26,47 +26,55 @@ public class BoardController {
     @PostMapping
     public ResponseEntity<BoardResponseDto> createPost(
             HttpServletRequest req,
-            @Valid @RequestBody BoardRequestDto dto){
+            @Valid @RequestBody BoardRequestDto dto,
+            @RequestHeader(required = false) AnonymousRequestDto anonymous
+    ){
         Long sessionUserId = (Long) req.getSession().getAttribute("userId");
 
-        BoardResponseDto board = sessionCheckingService.CreatePost(sessionUserId, dto);
+        BoardResponseDto board = sessionCheckingService.CreatePost(sessionUserId, dto, anonymous);
 
         return ResponseEntity.ok(board);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{boardId}")
     public ResponseEntity<BoardReadResponseDto> readPost(
-            @PathVariable Long id,
+            @PathVariable Long boardId,
             @RequestParam(defaultValue = PAGE_COUNT) int page,
-            @RequestParam(defaultValue = PAGE_SIZE) int size){
-        return ResponseEntity.ok(boardService.readPost(id, page, size));
+            @RequestParam(defaultValue = PAGE_SIZE) int size
+    ){
+        return ResponseEntity.ok(boardService.readPost(boardId, page, size));
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/{boardId}")
     public ResponseEntity<BoardResponseDto> updatePost(
             HttpServletRequest req,
-            @PathVariable Long id,
-            @Valid @RequestBody BoardRequestDto dto){
+            @PathVariable Long boardId,
+            @Valid @RequestBody BoardRequestDto dto,
+            @RequestHeader(required = false) AnonymousRequestDto anonymous
+    ){
         Long sessionUserId = (Long) req.getSession().getAttribute("userId");
 
-        BoardResponseDto board = sessionCheckingService.UpdatePost(sessionUserId, id, dto);
+        BoardResponseDto board = sessionCheckingService.UpdatePost(sessionUserId, boardId, dto, anonymous);
 
         return ResponseEntity.ok(board);
     }
 
-    @PutMapping("/{id}/likes")
-    public ResponseEntity<BoardResponseDto> likePost(@PathVariable Long id){
-        return ResponseEntity.ok(boardService.likePost(id));
+    @PutMapping("/{boardId}/likes")
+    public ResponseEntity<BoardResponseDto> likePost(
+            @PathVariable Long boardId
+    ){
+        return ResponseEntity.ok(boardService.likePost(boardId));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{boardId}")
     public ResponseEntity<String> deletePost(
             HttpServletRequest req,
-            @PathVariable Long id,
-            @Valid @RequestBody(required = false) BoardPasswordRequestDto dto){
+            @PathVariable Long boardId,
+            @RequestHeader(required = false) AnonymousRequestDto anonymous
+    ){
         Long sessionUserId = (Long) req.getSession().getAttribute("userId");
 
-        sessionCheckingService.DeletePost(sessionUserId, id, dto);
+        sessionCheckingService.DeletePost(sessionUserId, boardId, anonymous);
 
         return ResponseEntity.ok("해당 게시물이 정상적으로 삭제되었습니다.");
     }

@@ -16,12 +16,6 @@ public class CommentMapper {
                 .content(comment.getContent())
                 .createdAt(comment.getCreatedAt())
                 .bigCommentId(comment.getParentsComment() != null ? comment.getParentsComment().getId() : null)
-                .smallComment(comment.getChildComment() != null
-                        ? comment.getChildComment().stream()
-                        .map(CommentMapper::toDto)
-                        .collect(Collectors.toList())
-                        : List.of()
-                )
                 .build();
     }
 

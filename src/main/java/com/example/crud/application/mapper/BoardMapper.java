@@ -14,7 +14,7 @@ public class BoardMapper {
 
     //entity -> dto
     public static BoardResponseDto toDto(Board board){
-        String hotTitle = board.getLiked() > HOT_TITLE ? "\uD83D\uDD25 " + board.getTitle() : board.getTitle();
+        String hotTitle = getHotTitle(board);
         return BoardResponseDto.builder()
                 .id(board.getId())
                 .title(hotTitle)
@@ -29,7 +29,7 @@ public class BoardMapper {
 
     //entity -> dto (read)
     public static BoardReadResponseDto toReadDto(Board board, Page<CommentResponseDto> comments){
-        String hotTitle = board.getLiked() > HOT_TITLE ? "\uD83D\uDD25 " + board.getTitle() : board.getTitle();
+        String hotTitle = getHotTitle(board);
         return BoardReadResponseDto.builder()
                 .id(board.getId())
                 .title(hotTitle)
@@ -46,7 +46,7 @@ public class BoardMapper {
 
     //entity -> dto (paging)
     public static BoardPagingResponseDto toPagingDto(Board board){
-        String hotTitle = board.getLiked() > HOT_TITLE ? "\uD83D\uDD25 " + board.getTitle() : board.getTitle();
+        String hotTitle = getHotTitle(board);
         return BoardPagingResponseDto.builder()
                 .id(board.getId())
                 .title(hotTitle)
@@ -57,6 +57,10 @@ public class BoardMapper {
                 .createdAt(board.getCreatedAt())
                 .commentsNum((long) board.getComments().size())
                 .build();
+    }
+
+    private static String getHotTitle(Board board) {
+        return board.getLiked() > HOT_TITLE ? "\uD83D\uDD25 " + board.getTitle() : board.getTitle();
     }
 
 }

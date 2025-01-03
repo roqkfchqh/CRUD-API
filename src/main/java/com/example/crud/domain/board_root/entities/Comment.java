@@ -4,11 +4,8 @@ import com.example.crud.domain.board_root.aggregate.Board;
 import com.example.crud.domain.common.DateTimeEntity;
 import com.example.crud.domain.user_root.aggregate.User;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.util.List;
 
 import static lombok.AccessLevel.PRIVATE;
 
@@ -45,40 +42,23 @@ public class Comment extends DateTimeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parents_comment_id")
-    @JsonBackReference
     private Comment parentsComment;
 
-    @OneToMany(mappedBy = "parentsComment")
-    @JsonManagedReference
-    private List<Comment> childComment;
-
     public static Comment create(User user, String nickname, String content, Board board) {
-        return new Comment(
-                user,
-                nickname,
-                content,
-                board);
+        Comment comment = new Comment();
+        comment.user = user;
+        comment.nickname = nickname;
+        comment.content = content;
+        comment.board = board;
+        return comment;
     }
 
     public static Comment create(String nickname, String content, Board board, String password) {
-        return new Comment(
-                nickname,
-                content,
-                board,
-                password);
-    }
-
-    private Comment(User user, String nickname, String content, Board board) {
-        this.user = user;
-        this.nickname = nickname;
-        this.content = content;
-        this.board = board;
-    }
-
-    private Comment(String nickname, String content, Board board, String password) {
-        this.nickname = nickname;
-        this.content = content;
-        this.board = board;
-        this.password = password;
+        Comment comment = new Comment();
+        comment.nickname = nickname;
+        comment.content = content;
+        comment.board = board;
+        comment.password = password;
+        return comment;
     }
 }
