@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class BoardService {
 
     private final BoardAsyncService boardAsyncService;
-    private final BoardPagingService boardPagingService;
+    private final BoardSearchPagingService boardSearchPagingService;
     private final BoardRepository boardRepository;
 
     //readPost
@@ -26,7 +26,7 @@ public class BoardService {
         Board board = getBoard(id);
         boardAsyncService.updateViewCountAsync(id);
 
-        Page<CommentResponseDto> comments = boardPagingService.pagingComments(id, page, size);
+        Page<CommentResponseDto> comments = boardSearchPagingService.pagingComments(id, page, size);
         return BoardMapper.toReadDto(board, comments);
     }
 

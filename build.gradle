@@ -76,6 +76,10 @@ dependencies {
 	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
 	annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
 	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+
+	//elasticsearch
+	implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
+	implementation 'org.elasticsearch.client:elasticsearch-rest-high-level-client:8.10.2'
 }
 
 clean {	delete file('src/main/generated')}

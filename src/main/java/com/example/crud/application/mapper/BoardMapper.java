@@ -1,6 +1,6 @@
 package com.example.crud.application.mapper;
 
-import com.example.crud.application.dto.board.BoardPagingResponseDto;
+import com.example.crud.application.dto.board.BoardSearchPagingResponseDto;
 import com.example.crud.application.dto.board.BoardReadResponseDto;
 import com.example.crud.application.dto.board.BoardResponseDto;
 
@@ -45,9 +45,9 @@ public class BoardMapper {
     }
 
     //entity -> dto (paging)
-    public static BoardPagingResponseDto toPagingDto(Board board){
+    public static BoardSearchPagingResponseDto toPagingDto(Board board){
         String hotTitle = getHotTitle(board);
-        return BoardPagingResponseDto.builder()
+        return BoardSearchPagingResponseDto.builder()
                 .id(board.getId())
                 .title(hotTitle)
                 .nickname(board.getNickname())

@@ -1,7 +1,5 @@
 package com.example.crud.application.app_service.board.crud;
 
-import com.example.crud.application.app_service.board.common.BoardAsyncService;
-import com.example.crud.application.app_service.board.common.BoardPagingService;
 import com.example.crud.application.dto.board.BoardRequestDto;
 import com.example.crud.application.dto.board.BoardResponseDto;
 import com.example.crud.application.dto.comment.CommentRequestDto;
@@ -29,10 +27,8 @@ public class BoardUserService implements BoardStrategy<Long> {
 
     private final BoardRepository boardRepository;
     private final CommentRepository commentRepository;
-    private final BoardAsyncService boardAsyncService;
-    private final BoardPagingService boardPagingService;
-    private final BoardDomainService boardDomainService;
     private final UserRepository userRepository;
+    private final BoardDomainService boardDomainService;
 
     @Override
     public BoardResponseDto createPost(BoardRequestDto dto, Long userInfo) {
@@ -45,9 +41,7 @@ public class BoardUserService implements BoardStrategy<Long> {
     @Override
     public BoardResponseDto updatePost(BoardRequestDto dto, Long userInfo, Long id) {
         Board board = getBoard(id);
-
         board.update(dto.getTitle(), dto.getContent(), Category.valueOf(dto.getCategory()));
-
         return BoardMapper.toDto(board);
     }
 
@@ -60,11 +54,8 @@ public class BoardUserService implements BoardStrategy<Long> {
     @Transactional
     public CommentResponseDto createComment(Long boardId, CommentRequestDto dto, Long userInfo) {
         Board board = getBoard(boardId);
-        User user = userRepository.findById(userInfo)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-
+        User user = getUser(userInfo);
         Comment comment = boardDomainService.createComment(user, user.getName(), dto.getContent(), board);
-
         commentRepository.save(comment);
         return CommentMapper.toDto(comment);
     }
@@ -72,12 +63,8 @@ public class BoardUserService implements BoardStrategy<Long> {
     @Override
     @Transactional
     public void deleteComment(Long boardId, Long commentId, Long userInfo) {
-
         Board board = getBoard(boardId);
-
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
-
+        Comment comment = getComment(commentId);
         board.removeComment(comment);
         commentRepository.deleteById(commentId);
     }
@@ -86,5 +73,15 @@ public class BoardUserService implements BoardStrategy<Long> {
     private Board getBoard(Long id) {
         return boardRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.CONTENT_NOT_FOUND));
+    }
+
+    private User getUser(Long userInfo) {
+        return userRepository.findById(userInfo)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    private Comment getComment(Long commentId) {
+        return commentRepository.findById(commentId)
+                .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
     }
 }

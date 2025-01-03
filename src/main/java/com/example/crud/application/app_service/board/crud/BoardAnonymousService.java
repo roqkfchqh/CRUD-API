@@ -42,9 +42,7 @@ public class BoardAnonymousService implements BoardStrategy<AnonymousRequestDto>
     @Transactional
     public BoardResponseDto updatePost(BoardRequestDto dto, AnonymousRequestDto userInfo, Long id) {
         Board board = getBoard(id);
-
         board.update(dto.getTitle(), dto.getContent(), Category.valueOf(dto.getCategory()));
-
         boardRepository.save(board);
         return BoardMapper.toDto(board);
     }
@@ -58,11 +56,8 @@ public class BoardAnonymousService implements BoardStrategy<AnonymousRequestDto>
     @Transactional
     public CommentResponseDto createComment(Long boardId, CommentRequestDto dto, AnonymousRequestDto userInfo) {
         String encodedPassword = passwordEncoder.encode(userInfo.getPassword());
-
         Board board = getBoard(boardId);
-
         Comment comment = boardDomainService.createAnonymousComment(userInfo.getNickname(), dto.getContent(), board, encodedPassword);
-
         commentRepository.save(comment);
         boardRepository.save(board);
         return CommentMapper.toDto(comment);
@@ -71,12 +66,8 @@ public class BoardAnonymousService implements BoardStrategy<AnonymousRequestDto>
     @Override
     @Transactional
     public void deleteComment(Long boardId, Long commentId, AnonymousRequestDto userInfo) {
-
         Board board = getBoard(boardId);
-
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
-
+        Comment comment = getComment(commentId);
         board.removeComment(comment);
         commentRepository.deleteById(commentId);
         boardRepository.save(board);
@@ -86,5 +77,10 @@ public class BoardAnonymousService implements BoardStrategy<AnonymousRequestDto>
     private Board getBoard(Long id) {
         return boardRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.CONTENT_NOT_FOUND));
+    }
+
+    private Comment getComment(Long commentId) {
+        return commentRepository.findById(commentId)
+                .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
     }
 }
